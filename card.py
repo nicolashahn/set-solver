@@ -1,18 +1,23 @@
+#!/usr/bin/env python
 """Find SET cards in an image."""
 
+import os
+import shutil
 import cv2
 import numpy as np
 
 # in a game there's usually 12, but 15 max if no sets in the 12
 MAXCARDS = 15
 
-IMG_FILENAME_TEMPLATE = 'image-data/set-games/setgame{}.jpg'
+GAME_FILE_FMT = 'image-data/set-games/setgame{}.jpg'
+OUT_DIR = 'out'
+OUT_FILE_FMT = 'card{}.jpg'
 
 OUT_WIDTH = 450
 OUT_HEIGHT = 300
 
 def game_img_filename(n):
-  return IMG_FILENAME_TEMPLATE.format(n)
+  return GAME_FILE_FMT.format(n)
 
 def display(im, imgname='image'):
   """Displays image, waits for any key press, then closes windows."""
@@ -49,6 +54,7 @@ def rectify(h):
   else:
     top_l, top_r, bot_r, bot_l = 1,3,2,0
 
+  # point order is clockwise from top left
   add = h.sum(1)
   hnew[top_l] = h[np.argmin(add)]
   hnew[top_r] = h[np.argmax(add)]
@@ -108,11 +114,25 @@ def find_cards(filename,
       warp = cv2.warpPerspective(orig_im,transform,(out_w,out_h))
       yield warp
 
+def write_cards(cards, out_dir=OUT_DIR, out_file=OUT_FILE_FMT):
+  """Write enumerated card image files."""
+  # clear old cards from dir
+  if os.path.exists(out_dir):
+    shutil.rmtree(out_dir)
+  os.mkdir(out_dir)
+
+  # write each card, numbered
+  for i, card in enumerate(cards):
+    out_path = os.path.join(out_dir, out_file.format(str(i).zfill(2)))
+    cv2.imwrite(out_path, card)
+    print(out_path)
+
 def main():
   # for filename in [game_img_filename(i) for i in range(7)]:
     # find_cards(filename)
-  cards = find_cards(game_img_filename(3))
-  [display(card) for card in cards]
+  cards = find_cards(game_img_filename(7))
+  write_cards(cards)
+  # [display(card) for card in cards]
 
 if __name__ == '__main__':
   main()
