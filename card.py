@@ -8,6 +8,9 @@ MAXCARDS = 15
 
 IMG_FILENAME_TEMPLATE = 'image-data/set-games/setgame{}.jpg'
 
+OUT_WIDTH = 450
+OUT_HEIGHT = 300
+
 def game_img_filename(n):
   return IMG_FILENAME_TEMPLATE.format(n)
 
@@ -55,27 +58,26 @@ def rectify(h):
 
   return hnew
 
-def find_cards(filename, resize=False):
+def find_cards(filename,
+               resize=False,
+               out_w=OUT_WIDTH,
+               out_h=OUT_HEIGHT):
   """Find SET game cards in image."""
+
   # 1 = color, 0 = gray, -1 = color+alpha
   orig_im = cv2.imread(filename, 1)
   im = cv2.imread(filename, 0)
-  display(orig_im)
 
+  # shrink image if huge
   if resize:
     im = shrink(im)
     orig_im = shrink(orig_im)
 
   # filters to make it easier for opencv to find card
   blur = cv2.GaussianBlur(im,(3,3),1000)
-  # edges = cv2.Canny(blur, 100, 255)
-  # all_filters = cv2.add(blur, edges)
 
   # this '180' might need to be tweaked based on histogram of image
   flag, thresh = cv2.threshold(blur, 180, 255, cv2.THRESH_BINARY)
-  # thresh = cv2.adaptiveThreshold(
-    # blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
-  # display(thresh)
 
   # `image` is the thrown away value
   _, contours, hierarchy = cv2.findContours(
@@ -83,41 +85,34 @@ def find_cards(filename, resize=False):
   # takes the $MAXCARDS largest contours
   contours = sorted(contours, key=cv2.contourArea,reverse=True)
 
-  # create image with contour
-  # mask = np.ones(im.shape[:2], dtype="uint8") * 255
-  # cv2.drawContours(mask, contours, -1, 0, -1)
-  # contour_mask = cv2.bitwise_and(im, im, mask=mask)
-
   # will likely never have < 15 contours unless image is pure black or something
   for i in range(min(MAXCARDS, len(contours))):
     card = contours[i]
     peri = cv2.arcLength(card,True)
-    approx = cv2.approxPolyDP(card,0.05*peri,True)
-    # print(approx.reshape(-1, approx.shape[-1]))
+    approx = cv2.approxPolyDP(card,0.1*peri,True)
 
     # quadrangles only
     if len(approx) == 4: 
+
+      # try to order each of the 4 points correctly
       approx = rectify(approx)
-      # for point in approx:
-        # cv2.circle(orig_im, (point[0], point[1]), 0, (0,0,255), 5)
-      # cv2.drawContours(orig_im, approx, 0, (0,0,255), 2)
-      # rect = cv2.minAreaRect(contours[i])
-      # r = cv2.boxPoints(rect)
-      # box = np.int0(r)
-      # cv2.drawContours(orig_im,[box],0,(0,0,255),2)
 
-      h = np.array([ [0,0],[449,0],[449,449],[0,449] ],np.float32)
+      # create an image of just the card
+      h = np.array([ 
+        [0,0],
+        [out_w-1,0],
+        [out_w-1,out_h-1],
+        [0,out_h-1]
+      ],np.float32)
       transform = cv2.getPerspectiveTransform(approx,h)
-      warp = cv2.warpPerspective(orig_im,transform,(450,450))
-
-      display(warp)
-      # yield warp
-  # display(orig_im)
+      warp = cv2.warpPerspective(orig_im,transform,(out_w,out_h))
+      yield warp
 
 def main():
   # for filename in [game_img_filename(i) for i in range(7)]:
     # find_cards(filename)
-  find_cards(game_img_filename(7))
+  cards = find_cards(game_img_filename(3))
+  [display(card) for card in cards]
 
 if __name__ == '__main__':
   main()
