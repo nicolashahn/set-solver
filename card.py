@@ -1,8 +1,13 @@
 #!/usr/bin/env python
-"""Find SET cards in an image."""
+"""Find SET cards in an image.
+Overall process is more or less this:
+http://arnab.org/blog/so-i-suck-24-automating-card-games-using-opencv-and-python
+"""
 
+import argparse
 import os
 import shutil
+import sys
 import cv2
 import numpy as np
 
@@ -13,14 +18,24 @@ GAME_FILE_FMT = 'image-data/set-games/setgame{}.jpg'
 OUT_DIR = 'out'
 OUT_FILE_FMT = 'card{}.jpg'
 
+# output set card image dimensions
 OUT_WIDTH = 450
 OUT_HEIGHT = 300
+
+# min channel cutoff for the threshold filter
+THRESH_MIN = 180
+# how much a contour's area can differ from the mean of the top MAXCARDS
+CONTOUR_AREA_TOLERANCE = 2.0
 
 def game_img_filename(n):
   return GAME_FILE_FMT.format(n)
 
-def display(im, imgname='image'):
+def display_img(im, imgname='image', resize=True):
   """Displays image, waits for any key press, then closes windows."""
+  # shrink image if huge, to fit on screen
+  if resize:
+    im = shrink(im)
+
   cv2.imshow(imgname, im)
   cv2.waitKey(0)
   cv2.destroyAllWindows()
@@ -38,6 +53,23 @@ def shrink(im, max_dim=1000):
     im = cv2.resize(im, (0,0), fx=ratio, fy=ratio)
   return im
 
+def remove_contour_outliers(contours):
+  """Remove contours that differ greatly from the mean size.
+  If most of the top contours are cards, this gets rid of overly large
+  or small polygons that are likely not cards.
+  """
+  # get average of largest contour areas
+  areas = [cv2.contourArea(contours[i]) for i in range(MAXCARDS)]
+  avg = sum(areas) / (len(areas) or 1)
+
+  def area_filter(c, tolerance=CONTOUR_AREA_TOLERANCE):
+    """Remove this contour if area is too far from the mean."""
+    c_area = cv2.contourArea(c)
+    return ((1/tolerance)*avg < c_area) and (c_area < tolerance*avg)
+
+  contours = filter(area_filter, contours)
+  return contours
+  
 def rectify(h):
   """Ensure the 4 points for each card we find have identical ordering."""
   h = h.reshape((4,2))
@@ -49,10 +81,7 @@ def rectify(h):
   ys = [p[1] for p in h]
   width = max(xs) - min(xs)
   height = max(ys) - min(ys)
-  if height < width:
-    top_l, top_r, bot_r, bot_l = 0,2,1,3
-  else:
-    top_l, top_r, bot_r, bot_l = 1,3,2,0
+  top_l, top_r, bot_r, bot_l = (0,2,1,3) if height < width else (1,3,2,0)
 
   # point order is clockwise from top left
   add = h.sum(1)
@@ -65,33 +94,30 @@ def rectify(h):
   return hnew
 
 def find_cards(filename,
-               resize=False,
                out_w=OUT_WIDTH,
-               out_h=OUT_HEIGHT):
-  """Find SET game cards in image."""
-
+               out_h=OUT_HEIGHT,
+               display_points=False):
+  """Find SET game cards in image and return as a list of images."""
   # 1 = color, 0 = gray, -1 = color+alpha
   orig_im = cv2.imread(filename, 1)
   im = cv2.imread(filename, 0)
 
-  # shrink image if huge
-  if resize:
-    im = shrink(im)
-    orig_im = shrink(orig_im)
-
   # filters to make it easier for opencv to find card
-  blur = cv2.GaussianBlur(im,(3,3),1000)
+  blur = cv2.GaussianBlur(im,(1,1),1000)
 
-  # this '180' might need to be tweaked based on histogram of image
-  flag, thresh = cv2.threshold(blur, 180, 255, cv2.THRESH_BINARY)
+  flag, thresh = cv2.threshold(blur, THRESH_MIN, 255, cv2.THRESH_BINARY)
 
   # `image` is the thrown away value
   _, contours, hierarchy = cv2.findContours(
     thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-  # takes the $MAXCARDS largest contours
+
+  # sort contours by largest volume
   contours = sorted(contours, key=cv2.contourArea,reverse=True)
 
-  # will likely never have < 15 contours unless image is pure black or something
+  # throw out contours that are far from the mean size
+  contours = remove_contour_outliers(contours)
+
+  # will likely never have < MAXCARDS contours (unless solid black or similar)
   for i in range(min(MAXCARDS, len(contours))):
     card = contours[i]
     peri = cv2.arcLength(card,True)
@@ -100,8 +126,13 @@ def find_cards(filename,
     # quadrangles only
     if len(approx) == 4: 
 
-      # try to order each of the 4 points correctly
+      # order each of the 4 points uniformly, rotating if necessary
       approx = rectify(approx)
+
+      if display_points:
+        display_img(approx)
+        for point in approx:
+          cv2.circle(orig_im, (point[0], point[1]), 0, (0,0,255), im.shape[0]/100)
 
       # create an image of just the card
       h = np.array([ 
@@ -112,10 +143,14 @@ def find_cards(filename,
       ],np.float32)
       transform = cv2.getPerspectiveTransform(approx,h)
       warp = cv2.warpPerspective(orig_im,transform,(out_w,out_h))
-      yield warp
+      if not display_points:
+        yield warp
+
+  if display_points:
+    display_img(orig_im)
 
 def write_cards(cards, out_dir=OUT_DIR, out_file=OUT_FILE_FMT):
-  """Write enumerated card image files."""
+  """Write enumerated card image files, print filenames."""
   # clear old cards from dir
   if os.path.exists(out_dir):
     shutil.rmtree(out_dir)
@@ -127,12 +162,27 @@ def write_cards(cards, out_dir=OUT_DIR, out_file=OUT_FILE_FMT):
     cv2.imwrite(out_path, card)
     print(out_path)
 
+def make_parser():
+  """Argument parser
+  game_file:    image with 12 or 15 SET cards
+  write:        write output images to files
+  display:      show images using cv2.imshow()
+  """
+  parser = argparse.ArgumentParser(description='Find SET cards in an image.')
+  parser.add_argument('game_num', metavar='game_num', type=int)
+  parser.add_argument('--write', dest='write', type=bool, default=False)
+  parser.add_argument('--display', dest='display', type=bool, default=True)
+  return parser.parse_args()
+
 def main():
-  # for filename in [game_img_filename(i) for i in range(7)]:
-    # find_cards(filename)
-  cards = find_cards(game_img_filename(7))
-  write_cards(cards)
-  # [display(card) for card in cards]
+  """Find cards, then either write to files or display images."""
+  args = make_parser()
+  img_file = game_img_filename(args.game_num)
+  cards = find_cards(img_file)
+  if args.write:
+    write_cards(cards)
+  if args.display:
+    [display_img(card) for card in cards]
 
 if __name__ == '__main__':
   main()
