@@ -11,7 +11,9 @@ import sys
 import cv2
 import numpy as np
 
-# in a game there's usually 12, but 15 max if no sets in the 12
+# technically there's a possibility of 18 cards required:
+# https://norvig.com/SET.html
+# but we'll simplify the problem for now
 MAXCARDS = 15
 
 GAME_FILE_FMT = 'image-data/set-games/setgame{}.jpg'
@@ -40,10 +42,16 @@ def display_img(im, imgname='image', resize=True):
   cv2.waitKey(0)
   cv2.destroyAllWindows()
 
+def mean(ns):
+  return sum(ns)/(len(ns) or 1)
+
+def median(ns):
+  return ns[len(ns)/2]
+
 def shrink(im, max_dim=1000):
   """Make image a computationally wieldy size if necessary."""
-  # 'depth' is missing depending on if we're importing original image or not
   if len(im.shape) == 3:
+    # 'depth' is missing depending on if we're importing original image or not
     height, width, _ = im.shape
   else:
     height, width = im.shape
@@ -54,18 +62,17 @@ def shrink(im, max_dim=1000):
   return im
 
 def remove_contour_outliers(contours):
-  """Remove contours that differ greatly from the mean size.
+  """Remove contours that differ greatly from the median size.
   If most of the top contours are cards, this gets rid of overly large
   or small polygons that are likely not cards.
   """
-  # get average of largest contour areas
-  areas = [cv2.contourArea(contours[i]) for i in range(MAXCARDS)]
-  avg = sum(areas) / (len(areas) or 1)
+  # get median of largest contour areas
+  med = median([cv2.contourArea(contours[i]) for i in range(MAXCARDS)])
 
   def area_filter(c, tolerance=CONTOUR_AREA_TOLERANCE):
-    """Remove this contour if area is too far from the mean."""
+    """Remove this contour if area is too far from the median."""
     c_area = cv2.contourArea(c)
-    return ((1/tolerance)*avg < c_area) and (c_area < tolerance*avg)
+    return ((1/tolerance)*med < c_area) and (c_area < tolerance*med)
 
   contours = filter(area_filter, contours)
   return contours
@@ -102,6 +109,9 @@ def find_cards(filename,
   orig_im = cv2.imread(filename, 1)
   im = cv2.imread(filename, 0)
 
+  avg_brightness = mean([mean(row) for row in im])
+  print(avg_brightness)
+
   # filters to make it easier for opencv to find card
   blur = cv2.GaussianBlur(im,(1,1),1000)
 
@@ -114,7 +124,7 @@ def find_cards(filename,
   # sort contours by largest volume
   contours = sorted(contours, key=cv2.contourArea,reverse=True)
 
-  # throw out contours that are far from the mean size
+  # throw out contours that are far from the median size
   contours = remove_contour_outliers(contours)
 
   # will likely never have < MAXCARDS contours (unless solid black or similar)
@@ -164,7 +174,7 @@ def write_cards(cards, out_dir=OUT_DIR, out_file=OUT_FILE_FMT):
 
 def make_parser():
   """Argument parser
-  game_file:    image with 12 or 15 SET cards
+  game_file:    image with up to MAXCARDS set cards
   write:        write output images to files
   display:      show images using cv2.imshow()
   """
