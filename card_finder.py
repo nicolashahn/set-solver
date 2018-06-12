@@ -180,8 +180,8 @@ def make_parser():
   """
   parser = argparse.ArgumentParser(description='Find SET cards in an image.')
   parser.add_argument('game_num', metavar='game_num', type=int)
-  parser.add_argument('--write', dest='write', type=bool, default=False)
-  parser.add_argument('--display', dest='display', type=bool, default=True)
+  parser.add_argument('--write', dest='write', action='store_true')
+  parser.add_argument('--display', dest='display', action='store_false')
   return parser.parse_args()
 
 def main():
