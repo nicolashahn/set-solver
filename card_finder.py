@@ -10,6 +10,13 @@ import shutil
 import sys
 import cv2
 import numpy as np
+from common import (
+  CARD_FINDER_OUT_DIR,
+  display_im,
+  mean,
+  median,
+  shrink
+)
 
 # technically there's a possibility of 18 cards required:
 # https://norvig.com/SET.html
@@ -17,7 +24,6 @@ import numpy as np
 MAXCARDS = 15
 
 GAME_FILE_FMT = 'image-data/set-games/setgame{}.jpg'
-OUT_DIR = 'out'
 OUT_FILE_FMT = 'card{}.jpg'
 
 # output set card image dimensions
@@ -31,35 +37,6 @@ CONTOUR_AREA_TOLERANCE = 2.0
 
 def game_img_filename(n):
   return GAME_FILE_FMT.format(n)
-
-def display_img(im, imgname='image', resize=True):
-  """Displays image, waits for any key press, then closes windows."""
-  # shrink image if huge, to fit on screen
-  if resize:
-    im = shrink(im)
-
-  cv2.imshow(imgname, im)
-  cv2.waitKey(0)
-  cv2.destroyAllWindows()
-
-def mean(ns):
-  return sum(ns)/(len(ns) or 1)
-
-def median(ns):
-  return ns[len(ns)/2]
-
-def shrink(im, max_dim=1000):
-  """Make image a computationally wieldy size if necessary."""
-  if len(im.shape) == 3:
-    # 'depth' is missing depending on if we're importing original image or not
-    height, width, _ = im.shape
-  else:
-    height, width = im.shape
-
-  ratio = max_dim / float(max(height, width))
-  if ratio < 1:
-    im = cv2.resize(im, (0,0), fx=ratio, fy=ratio)
-  return im
 
 def remove_contour_outliers(contours):
   """Remove contours that differ greatly from the median size.
@@ -109,8 +86,8 @@ def find_cards(filename,
   orig_im = cv2.imread(filename, 1)
   im = cv2.imread(filename, 0)
 
-  avg_brightness = mean([mean(row) for row in im])
-  print(avg_brightness)
+  # this may be useful later
+  # avg_brightness = mean([mean(row) for row in im])
 
   # filters to make it easier for opencv to find card
   blur = cv2.GaussianBlur(im,(1,1),1000)
@@ -134,13 +111,13 @@ def find_cards(filename,
     approx = cv2.approxPolyDP(card,0.1*peri,True)
 
     # quadrangles only
-    if len(approx) == 4: 
+    if len(approx) == 4:
 
       # order each of the 4 points uniformly, rotating if necessary
       approx = rectify(approx)
 
       if display_points:
-        display_img(approx)
+        display_im(approx)
         for point in approx:
           cv2.circle(orig_im, (point[0], point[1]), 0, (0,0,255), im.shape[0]/100)
 
@@ -157,9 +134,9 @@ def find_cards(filename,
         yield warp
 
   if display_points:
-    display_img(orig_im)
+    display_im(orig_im)
 
-def write_cards(cards, out_dir=OUT_DIR, out_file=OUT_FILE_FMT):
+def write_cards(cards, out_dir=CARD_FINDER_OUT_DIR, out_file=OUT_FILE_FMT):
   """Write enumerated card image files, print filenames."""
   # clear old cards from dir
   if os.path.exists(out_dir):
@@ -185,14 +162,16 @@ def make_parser():
   return parser.parse_args()
 
 def main():
-  """Find cards, then either write to files or display images."""
+  """Find cards, then either write to files or display images.
+  Displaying images is the default behavior.
+  """
   args = make_parser()
   img_file = game_img_filename(args.game_num)
   cards = find_cards(img_file)
   if args.write:
     write_cards(cards)
   if args.display:
-    [display_img(card) for card in cards]
+    [display_im(card) for card in cards]
 
 if __name__ == '__main__':
   main()
