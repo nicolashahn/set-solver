@@ -12,6 +12,7 @@ import cv2
 import numpy as np
 from common import (
   CARD_FINDER_OUT_DIR,
+  write_im,
   display_im,
   mean,
   median,
@@ -145,9 +146,8 @@ def write_cards(cards, out_dir=CARD_FINDER_OUT_DIR, out_file=OUT_FILE_FMT):
 
   # write each card, numbered
   for i, card in enumerate(cards):
-    out_path = os.path.join(out_dir, out_file.format(str(i).zfill(2)))
-    cv2.imwrite(out_path, card)
-    print(out_path)
+    filename = out_file.format(str(i).zfill(2))
+    write_im(card, filename=filename, out_dir=out_dir, print_path=True)
 
 def make_parser():
   """Argument parser

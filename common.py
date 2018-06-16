@@ -4,7 +4,10 @@
 import os
 import cv2
 
-CARD_FINDER_OUT_DIR = 'out'
+# Constants
+
+CARD_FINDER_OUT_DIR = 'finder-out'
+PROCESS_CARD_OUT_DIR = 'process-out'
 
 IM_DATA_DIR = 'image-data'
 
@@ -13,11 +16,23 @@ LABELED_DIR = os.path.join(IM_DATA_DIR, 'all-cards', 'labeled')
 
 # the 4 possible attributes of a card
 CARD_ATTRS = {
-  'shade': ['solid', 'stripes', 'outline'],
   'color': ['red', 'green', 'purple'],
   'number': ['single', 'double', 'triple'],
+  'shade': ['solid', 'stripes', 'outline'],
   'shape': ['diamond', 'squiggle', 'capsule']
 }
+
+# Functions
+
+def write_im(card,
+             filename,
+             out_dir=PROCESS_CARD_OUT_DIR,
+             print_path=False):
+  """Write image to given path and filename."""
+  out_path = os.path.join(out_dir, filename)
+  cv2.imwrite(out_path, card)
+  if print_path:
+    print(out_path)
 
 def display_im(im, imgname='image', resize=True):
   """Displays image, waits for any key press, then closes windows."""

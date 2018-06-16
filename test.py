@@ -10,6 +10,7 @@ import classify_card as cc
 
 TMP_DIR = 'tmp'
 TEST_DATA_DIR = os.path.join(IM_DATA_DIR, 'test')
+SAMPLE_CARD = os.path.join(TEST_DATA_DIR, 'card06.jpg')
 
 class TestAll(unittest.TestCase):
 
@@ -36,14 +37,17 @@ class TestAll(unittest.TestCase):
 
   def test_classify_card_e2e(self):
     # this will break if classify_card() is modified to return something
-    # other than the nearest labeled card filename
-    card_file = os.path.join(TEST_DATA_DIR, 'card06.jpg')
+    # other than the nearest labeled card filename, like a dict of the attrs
     expected_label = 'purple-triple-solid-capsule.jpg'
 
     self.assertEqual(
-      cc.classify_card(card_file),
+      cc.classify_card(SAMPLE_CARD),
       expected_label
     )
+
+  def test_process_card_e2e(self):
+    # TODO
+    pass
 
 if __name__ == "__main__":
   unittest.main()

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 """Open images with SET cards, find the cards in the image, and allow
 the user to label them manually, then save the image with a filename
-that signifies the card's attributes.
+that signifies the card's attributes. Meant to be used only once to
+generate a set of all card images.
 """
 
 import os
@@ -21,7 +22,7 @@ CARD_ATTRS = {
   'shape': ['diamond', 'squiggle', 'capsule']
 }
 
-def write_card(card, tokens):
+def write_card_with_label(card, tokens):
   """Given a card image and the tokens indicating what attributes the card
   has, write a file with the attributes in the filename."""
   filename = os.path.join(OUT_DIR, '-'.join(tokens)+'.jpg')
@@ -66,7 +67,7 @@ def label_and_save(card):
   if 'n' in key:
     label_and_save(card)
 
-  write_card(card, tokens)
+  write_card_with_label(card, tokens)
   
 def main():
   """For each of the given filenames, show each card found and allow the
