@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-"""Test accuracy of card_classifier.py."""
+"""Test accuracy of card_classifier.py. To use this, generate labeled
+card images with label_all_cards.py to a directory and pass the directory
+to test_cards_in_dir()."""
 
 import os
 from tqdm import tqdm
@@ -11,20 +13,12 @@ GAME_NUM = 8
 GAME_FILE = os.path.join(SET_GAMES_DIR, 'setgame{}.jpg'.format(GAME_NUM))
 LABELED_CARDS_DIR = os.path.join(SET_GAME_CARDS_DIR, 'setgame{}'.format(GAME_NUM))
 
-def test_filenames(card_filenames, expected_labels):
-  """Get labels for a list of card filenames, and compare the resulting
-  list to the expected label list.
-  NOTE: Since this is just comparing two lists of labels, it does not 
-  contain information about which card images map to which labels - so
-  not a fullproof test, just quick and dirty for development.
-  """
-  labels = [classify_card(filename) for filename in tqdm(card_filenames)]
-  correct = [l for l in labels if l in expected_labels]
-  incorrect = [l for l in labels if l not in expected_labels]
-  score = float(len(correct)) / float(len(expected_labels))
+def get_score(correct, incorrect):
+  total_count = len(correct) + len(incorrect)
+  score = float(len(correct)) / float(total_count)
 
   print('\nRESULTS\n{} of {} correct, score: {}'.format(
-    len(correct), len(expected_labels), score))
+    len(correct), total_count, score))
 
   if correct:
     print('\nCorrect:')
@@ -38,28 +32,22 @@ def test_filenames(card_filenames, expected_labels):
 
   return score
 
-def test_game_accuracy(game_file, labeled_cards_dir):
-  """Test one game image file's classify_card accuracy, against a set of
-  prelabeled card images from that game file. Must have already run 
-  label_all_cards.py on the file and placed them in the appropriate 
-  LABELED_CARDS_DIR.
-  """
-  card_ims = find_cards(game_file)
-  card_filenames = write_cards(card_ims)
-  expected_labels = jpgs_in_dir(labeled_cards_dir)
-  return test_filenames(card_filenames, expected_labels)
-
 def test_cards_in_dir(labeled_cards_dir=LABELED_CARDS_DIR):
   """Feed each card in the directory to card_classifier, and compare
   the outputted label to the actual label, the card's filename
   (card_classifier.py does not use the filename information).
   """
+  correct, incorrect = [], []
   filenames = jpgs_in_dir(labeled_cards_dir)
-  full_paths = [os.path.join(labeled_cards_dir, f) for f in filenames]
-  return test_filenames(full_paths, filenames)
+  for filename in tqdm(filenames):
+    full_path = os.path.join(labeled_cards_dir, filename)
+    if classify_card(full_path) == filename:
+      correct.append(filename)
+    else:
+      incorrect.append(filename)
+  return get_score(correct, incorrect)
   
 def main():
-  # test_game_accuracy(GAME_FILE, LABELED_CARDS_DIR)
   test_cards_in_dir()
 
 if __name__ == "__main__":
