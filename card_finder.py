@@ -144,10 +144,13 @@ def write_cards(cards, out_dir=CARD_FINDER_OUT_DIR, out_file=OUT_FILE_FMT):
     shutil.rmtree(out_dir)
   os.mkdir(out_dir)
 
+  filenames = []
   # write each card, numbered
   for i, card in enumerate(cards):
     filename = out_file.format(str(i).zfill(2))
     write_im(card, filename=filename, out_dir=out_dir, print_path=True)
+    filenames.append(os.path.join(out_dir, filename))
+  return filenames
 
 def get_args():
   """Argument parser
