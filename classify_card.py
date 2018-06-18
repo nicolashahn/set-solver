@@ -6,18 +6,18 @@ import sys
 import cv2
 from diffimg import diff as diff_PIL
 from cv2_diff import diff as diff_cv2
-from common import LABELED_DIR, CARD_ATTRS
+from common import ALL_CARDS_LABELED_DIR
 
 def simple_diff(card_file_to_classify, method="PIL"):
   """Diff the given card file against all labeled cards, choose the lowest
   diff valued card. Default diff method is using PIL, can also use cv2.
   """
   scores = {}
-  labeled_filenames = [f for f in os.listdir(LABELED_DIR) if f[-4:] == '.jpg']
+  labeled_filenames = [f for f in os.listdir(ALL_CARDS_LABELED_DIR) if f[-4:] == '.jpg']
 
   # diff against all labeled cards, get best score
   for labeled_filename in labeled_filenames:
-    labeled_filename_path = os.path.join(LABELED_DIR, labeled_filename)
+    labeled_filename_path = os.path.join(ALL_CARDS_LABELED_DIR, labeled_filename)
     
     # image differentiation algorithm using PIL
     if method == 'PIL':

@@ -11,8 +11,14 @@ PROCESS_CARD_OUT_DIR = 'process-out'
 
 IM_DATA_DIR = 'image-data'
 
-# individual labeled card images
-LABELED_DIR = os.path.join(IM_DATA_DIR, 'all-cards', 'labeled')
+# sample images of set games
+SET_GAMES_DIR = os.path.join(IM_DATA_DIR, 'set-games')
+
+# individual card images from these games cut out and labeled
+SET_GAME_CARDS_DIR = os.path.join(IM_DATA_DIR, 'set-game-cards')
+
+# all cards labeled
+ALL_CARDS_LABELED_DIR = os.path.join(IM_DATA_DIR, 'all-cards', 'labeled')
 
 # the 4 possible attributes of a card
 CARD_ATTRS = {
