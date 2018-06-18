@@ -149,26 +149,34 @@ def write_cards(cards, out_dir=CARD_FINDER_OUT_DIR, out_file=OUT_FILE_FMT):
     filename = out_file.format(str(i).zfill(2))
     write_im(card, filename=filename, out_dir=out_dir, print_path=True)
 
-def make_parser():
+def get_args():
   """Argument parser
   game_file:    image with up to MAXCARDS set cards
   write:        write output images to files
   display:      show images using cv2.imshow()
   """
   parser = argparse.ArgumentParser(description='Find SET cards in an image.')
-  parser.add_argument('game_num', metavar='game_num', type=int)
-  parser.add_argument('--write', dest='write', action='store_true')
-  parser.add_argument('--display', dest='display', action='store_false')
+  parser.add_argument(
+    'img_file', metavar='img_file', type=str, nargs='?')
+  parser.add_argument('--game', dest='game_num', type=int)
+  parser.add_argument('--nowrite', dest='nowrite', action='store_true')
+  parser.add_argument('--display', dest='display', action='store_true')
   return parser.parse_args()
 
 def main():
   """Find cards, then either write to files or display images.
   Displaying images is the default behavior.
   """
-  args = make_parser()
-  img_file = game_img_filename(args.game_num)
+  args = get_args()
+
+  if args.img_file:
+    img_file = args.img_file
+  else:
+    img_file = game_img_filename(args.game_num)
+
   cards = find_cards(img_file)
-  if args.write:
+
+  if not args.nowrite:
     write_cards(cards)
   if args.display:
     [display_im(card) for card in cards]
