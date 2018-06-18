@@ -51,6 +51,9 @@ def display_im(im, imgname='image', resize=True):
   cv2.waitKey(0)
   cv2.destroyAllWindows()
 
+def jpgs_in_dir(dir):
+  return [f for f in os.listdir(dir) if f[-4:] == '.jpg']
+
 def mean(ns):
   return sum(ns)/(len(ns) or 1)
 
