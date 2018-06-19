@@ -7,6 +7,7 @@ import unittest
 from common import IM_DATA_DIR
 import card_finder as cf
 import classify_card as cc
+import find_shapes as fs
 
 TMP_DIR = 'tmp'
 TEST_DATA_DIR = os.path.join(IM_DATA_DIR, 'test')
@@ -43,6 +44,13 @@ class TestAll(unittest.TestCase):
     self.assertEqual(
       cc.classify_card(SAMPLE_CARD),
       expected_label
+    )
+
+  def test_find_shapes_e2e(self):
+    # only checks that we get the right number of shapes back
+    self.assertEqual(
+      len(fs.find_shapes(SAMPLE_CARD)),
+      3
     )
 
   def test_process_card_e2e(self):
