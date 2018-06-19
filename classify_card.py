@@ -4,6 +4,8 @@
 import os
 import sys
 import cv2
+import numpy as np
+from matplotlib import pyplot as plt
 from diffimg import diff as diff_PIL
 from cv2_diff import diff as diff_cv2
 from common import ALL_CARDS_LABELED_DIR
@@ -44,9 +46,6 @@ def simple_diff(card_file_to_classify, method="PIL"):
   return best
 
 def find_shape(shape_to_find, card_to_classify):
-  import numpy as np
-  import cv2
-  from matplotlib import pyplot as plt
   MIN_MATCH_COUNT = 10
   img1 = cv2.imread(shape_to_find,0)          # queryImage
   img2 = cv2.imread(card_to_classify,0) # trainImage
@@ -62,7 +61,6 @@ def find_shape(shape_to_find, card_to_classify):
   # Sort them in the order of their distance.
   matches = sorted(matches, key = lambda x:x.distance)
   
-
   print shape_to_find, len(matches), sum([m.distance for m in matches[:20]])
 
 
