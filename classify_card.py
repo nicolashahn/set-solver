@@ -91,6 +91,8 @@ def classify_card(card_file_to_classify):
     shape_file = os.path.join("image-data/shapes", shape)
     find_shape(shape_file, card_file_to_classify)
 
+  return simple_diff(card_file_to_classify)
+
 def main():
   card_file_to_classify = sys.argv[1]
   classified_card = classify_card(card_file_to_classify)
