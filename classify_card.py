@@ -18,7 +18,7 @@ def simple_diff(card_file_to_classify, method="PIL"):
   # diff against all labeled cards, get best score
   for labeled_filename in labeled_filenames:
     labeled_filename_path = os.path.join(LABELED_DIR, labeled_filename)
-    
+
     # image differentiation algorithm using PIL
     if method == 'PIL':
       scores[labeled_filename] = diff_PIL(
