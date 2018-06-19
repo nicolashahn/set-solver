@@ -3,16 +3,15 @@ Solve the SET card game using OpenCV. Image of a game of set -> same image with 
 
 ## Setup
 
-1. Install OpenCV
+### 1. Install OpenCV
 
 Mac: [Use this guide](https://www.pyimagesearch.com/2016/12/19/install-opencv-3-on-macos-with-homebrew-the-easy-way/)
+
 Linux: \#TODO
 
-2. Install python libraries: \#TODO
+### 2. Install python libraries: \#TODO
 
-More \#TODO
-
-3. Solve SET! \#TODO
+### 3. Solve SET! \#TODO
 
 ## Files
 
