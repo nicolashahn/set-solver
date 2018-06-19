@@ -3,8 +3,12 @@
 
 import os
 import cv2
+import numpy as np
 
-# Constants
+
+#############
+# Constants #
+#############
 
 CARD_FINDER_OUT_DIR = 'finder-out'
 PROCESS_CARD_OUT_DIR = 'process-out'
@@ -28,7 +32,10 @@ CARD_ATTRS = {
   'shape': ['diamond', 'squiggle', 'capsule']
 }
 
-# Functions
+
+#############
+# Functions #
+#############
 
 def write_im(card,
              filename,
@@ -75,3 +82,29 @@ def shrink(im, max_dim=1000):
     im = cv2.resize(im, (0,0), fx=ratio, fy=ratio)
   return im
 
+def rectify(h, portrait=False):
+  """Ensure the 4 points for each card we find have identical ordering."""
+  h = h.reshape((4,2))
+  hnew = np.zeros((4,2),dtype = np.float32)
+
+  # crude auto rotation to put all cards in landscape orientation
+  # will not do well with warped perspective, birds-eye only
+  xs = [p[0] for p in h]
+  ys = [p[1] for p in h]
+  width = max(xs) - min(xs)
+  height = max(ys) - min(ys)
+
+  # rotates the points based on whether we want portrait or landscape output,
+  # and simple check of height > width to determine orientation of original
+  correct_orientation = (height > width) if portrait else (not height > width)
+  top_l, top_r, bot_r, bot_l = (0,2,1,3) if correct_orientation else (1,3,2,0)
+
+  # point order is clockwise from top left
+  add = h.sum(1)
+  hnew[top_l] = h[np.argmin(add)]
+  hnew[top_r] = h[np.argmax(add)]
+  diff = np.diff(h,axis = 1)
+  hnew[bot_r] = h[np.argmin(diff)]
+  hnew[bot_l] = h[np.argmax(diff)]
+
+  return hnew

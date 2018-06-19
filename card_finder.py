@@ -16,7 +16,8 @@ from common import (
   display_im,
   mean,
   median,
-  shrink
+  shrink,
+  rectify
 )
 
 # technically there's a possibility of 18 cards required:
@@ -55,29 +56,6 @@ def remove_contour_outliers(contours):
   contours = filter(area_filter, contours)
   return contours
   
-def rectify(h):
-  """Ensure the 4 points for each card we find have identical ordering."""
-  h = h.reshape((4,2))
-  hnew = np.zeros((4,2),dtype = np.float32)
-
-  # crude auto rotation to put all cards in landscape orientation
-  # will not do well with warped perspective, birds-eye only
-  xs = [p[0] for p in h]
-  ys = [p[1] for p in h]
-  width = max(xs) - min(xs)
-  height = max(ys) - min(ys)
-  top_l, top_r, bot_r, bot_l = (0,2,1,3) if height < width else (1,3,2,0)
-
-  # point order is clockwise from top left
-  add = h.sum(1)
-  hnew[top_l] = h[np.argmin(add)]
-  hnew[top_r] = h[np.argmax(add)]
-  diff = np.diff(h,axis = 1)
-  hnew[bot_r] = h[np.argmin(diff)]
-  hnew[bot_l] = h[np.argmax(diff)]
-
-  return hnew
-
 def find_cards(filename,
                out_w=OUT_WIDTH,
                out_h=OUT_HEIGHT,
