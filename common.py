@@ -2,6 +2,7 @@
 """Common constants/functions shared between modules."""
 
 import os
+import shutil
 import cv2
 
 # Constants
@@ -23,6 +24,11 @@ CARD_ATTRS = {
 }
 
 # Functions
+
+def clean_make_dir(output_dir):
+  if os.path.exists(output_dir):
+    shutil.rmtree(output_dir)
+  os.mkdir(output_dir)
 
 def write_im(card,
              filename,

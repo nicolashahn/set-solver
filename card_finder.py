@@ -12,6 +12,7 @@ import cv2
 import numpy as np
 from common import (
   CARD_FINDER_OUT_DIR,
+  clean_make_dir,
   write_im,
   display_im,
   mean,
@@ -139,10 +140,7 @@ def find_cards(filename,
 
 def write_cards(cards, out_dir=CARD_FINDER_OUT_DIR, out_file=OUT_FILE_FMT):
   """Write enumerated card image files, print filenames."""
-  # clear old cards from dir
-  if os.path.exists(out_dir):
-    shutil.rmtree(out_dir)
-  os.mkdir(out_dir)
+  clean_make_dir(out_dir)
 
   # write each card, numbered
   for i, card in enumerate(cards):
