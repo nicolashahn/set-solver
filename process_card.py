@@ -73,7 +73,6 @@ def noteshrink_card(card_filename):
   print "SAVING", output_filename
   noteshrink.save(output_filename, labels, palette, dpi, options)
   cv2_im = cv2.imread(output_filename, 1)
-  display_im(cv2_im)
   return output_filename
 
 
