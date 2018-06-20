@@ -104,7 +104,6 @@ def classify_shape(card_file):
   ret = []
 
   card_im = cv2.imread(card_file)
-  display_im(card_im)
   for segment in segments:
     possibles = []
     for shape in shapes:
@@ -143,7 +142,8 @@ def classify_card(card_file_to_classify):
 
   card_im = cv2.imread(card_file_to_classify)
   shape = classify_shape(card_file_to_classify)
-  print "SHAPE IS", shape
+
+  return shape[0][1]
 
 def main():
   card_file_to_classify = sys.argv[1]
