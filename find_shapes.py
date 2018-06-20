@@ -1,10 +1,18 @@
 #!/usr/bin/env python
 """Find shapes in a card image."""
 
-import cv2
+import os
 import sys
+import cv2
 import numpy as np
-from common import display_im, rectify, expand_points
+from common import (
+  SHAPES_OUT_DIR,
+  display_im,
+  write_im,
+  clean_make_dir,
+  rectify,
+  expand_points
+)
 
 # min channel cutoff for the threshold filter
 THRESH_MIN = 180
@@ -42,7 +50,7 @@ def find_shapes(card_file,
     rectangle = cv2.minAreaRect(contours[i])
     corners = cv2.boxPoints(rectangle)
     corners = rectify(corners, portrait=True)
-    corners = expand_points(corners, 5)
+    # corners = expand_points(corners, 5)
 
     # writes dots for corners of bounding boxes on original image
     # for point in corners:
@@ -63,10 +71,21 @@ def find_shapes(card_file,
 
   return shapes
 
+def write_shape_with_label(input_card_path, out_dir=SHAPES_OUT_DIR):
+  """Cut path name up to extract the label minus the number, write the
+  shape to: <out_dir>/<color>-<shade>-<shape>.jpg"""
+  if not os.path.exists(out_dir):
+    os.mkdir(out_dir)
+  tokens = input_card_path.split('/')[-1].split('-')
+  del tokens[1]
+  new_filename = '-'.join(tokens)
+  print(new_filename)
+  write_im(shapes[0], new_filename, out_dir=out_dir)
+
 def main():
   card_file = sys.argv[1]
-  shapes = find_shapes(card_file, display_shapes=True)
-  # TODO write shapes somewhere?
+  shapes = find_shapes(card_file, display_shapes=False)
+  # write_shape_with_label(card_file)
 
 if __name__ == "__main__":
   main()

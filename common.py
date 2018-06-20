@@ -13,6 +13,7 @@ import numpy as np
 
 CARD_FINDER_OUT_DIR = 'finder-out'
 PROCESS_CARD_OUT_DIR = 'process-out'
+SHAPES_OUT_DIR = 'shapes-out'
 
 IM_DATA_DIR = 'image-data'
 
@@ -43,13 +44,13 @@ def clean_make_dir(output_dir):
     shutil.rmtree(output_dir)
   os.mkdir(output_dir)
 
-def write_im(card,
+def write_im(im,
              filename,
              out_dir=PROCESS_CARD_OUT_DIR,
              print_path=False):
   """Write image to given path and filename."""
   out_path = os.path.join(out_dir, filename)
-  cv2.imwrite(out_path, card)
+  cv2.imwrite(out_path, im)
   if print_path:
     print(out_path)
 
