@@ -88,17 +88,9 @@ def find_shape(shape_to_find, cv_im):
   return ret
 
 def classify_shape(card_file):
-  shapes = [
-    'green-single-outline-capsule.jpg',
-    'green-single-outline-diamond.jpg',
-    'green-single-outline-squiggle.jpg',
-    'green-single-solid-capsule.jpg',
-    'green-single-solid-diamond.jpg',
-    'green-single-solid-squiggle.jpg',
-    'green-single-stripes-capsule.jpg',
-    'green-single-stripes-diamond.jpg',
-    'green-single-stripes-squiggle.jpg',
-  ]
+  # change `all-shapes` to `shapes` to go back to using single green cards
+  shapes_dir = "image-data/all-shapes"
+  shapes = [s for s in os.listdir(shapes_dir) if s[-4:]=='.jpg']
 
   segments = find_shapes(card_file)
   ret = []
@@ -107,7 +99,7 @@ def classify_shape(card_file):
   for segment in segments:
     possibles = []
     for shape in shapes:
-      shape_file = os.path.join("image-data/shapes", shape)
+      shape_file = os.path.join(shapes_dir, shape)
       score = find_shape(shape_file, segment)
       if score:
         possibles.append((score, shape))
@@ -116,11 +108,8 @@ def classify_shape(card_file):
     if possibles:
       ret.append(possibles[0])
 
-
   ret.sort()
   return ret
-
-
 
 def classify_color(card_im):
   pass
