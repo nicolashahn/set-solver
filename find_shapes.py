@@ -72,8 +72,9 @@ def find_shapes(card_file,
   return shapes
 
 def write_shape_with_label(shape, input_card_path, out_dir=SHAPES_OUT_DIR):
-  """Cut path name up to extract the label minus the number, write the
-  shape to: <out_dir>/<color>-<shade>-<shape>.jpg"""
+  """Writes shape to a filename built from a labeled card file, replacing
+  its number with 'single'.
+  """
   if not os.path.exists(out_dir):
     os.mkdir(out_dir)
   tokens = input_card_path.split('/')[-1].split('-')
