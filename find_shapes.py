@@ -50,7 +50,7 @@ def find_shapes(card_file,
     rectangle = cv2.minAreaRect(contours[i])
     corners = cv2.boxPoints(rectangle)
     corners = rectify(corners, portrait=True)
-    corners = expand_points(corners, 15)
+    # corners = expand_points(corners, 15)
 
     # writes dots for corners of bounding boxes on original image
     # for point in corners:
@@ -71,7 +71,7 @@ def find_shapes(card_file,
 
   return shapes
 
-def write_shape_with_label(input_card_path, out_dir=SHAPES_OUT_DIR):
+def write_shape_with_label(shape, input_card_path, out_dir=SHAPES_OUT_DIR):
   """Cut path name up to extract the label minus the number, write the
   shape to: <out_dir>/<color>-<shade>-<shape>.jpg"""
   if not os.path.exists(out_dir):
@@ -80,12 +80,12 @@ def write_shape_with_label(input_card_path, out_dir=SHAPES_OUT_DIR):
   del tokens[1]
   new_filename = '-'.join(tokens)
   print(new_filename)
-  write_im(shapes[0], new_filename, out_dir=out_dir)
+  write_im(shape, new_filename, out_dir=out_dir)
 
 def main():
   card_file = sys.argv[1]
   shapes = find_shapes(card_file, display_shapes=False)
-  # write_shape_with_label(card_file)
+  write_shape_with_label(shapes[0], card_file)
 
 if __name__ == "__main__":
   main()
