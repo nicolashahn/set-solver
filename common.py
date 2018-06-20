@@ -116,10 +116,8 @@ def rectify(h, portrait=False):
 
   return hnew
 
-def expand_points(points, dist):
-  """Find center of a list of points, then push all points outward by
-  dist pixels from the center.
-  """
+def scale_points(points, scale):
+  """Scale a list of points outwards from the center."""
   # get center of points
   xs = [p[0] for p in points]
   ys = [p[1] for p in points]
@@ -132,8 +130,8 @@ def expand_points(points, dist):
     y = point[1]
     xdist = x - midx
     ydist = y - midy
-    newx = x + dist if xdist > 0 else x - dist
-    newy = y + dist if ydist > 0 else y - dist
+    newx = midx + xdist*scale
+    newy = midy + ydist*scale
     point[0] = newx
     point[1] = newy
   return points

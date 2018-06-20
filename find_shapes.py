@@ -11,7 +11,7 @@ from common import (
   write_im,
   clean_make_dir,
   rectify,
-  expand_points
+  scale_points
 )
 
 # min channel cutoff for the threshold filter
@@ -50,7 +50,7 @@ def find_shapes(card_file,
     rectangle = cv2.minAreaRect(contours[i])
     corners = cv2.boxPoints(rectangle)
     corners = rectify(corners, portrait=True)
-    # corners = expand_points(corners, 15)
+    corners = scale_points(corners, 1.15)
 
     # writes dots for corners of bounding boxes on original image
     # for point in corners:
@@ -85,8 +85,9 @@ def write_shape_with_label(shape, input_card_path, out_dir=SHAPES_OUT_DIR):
 
 def main():
   card_file = sys.argv[1]
-  shapes = find_shapes(card_file, display_shapes=False)
-  write_shape_with_label(shapes[0], card_file)
+  shapes = find_shapes(card_file, display_shapes=True)
+  # only works with labeled file 
+  # write_shape_with_label(shapes[0], card_file)
 
 if __name__ == "__main__":
   main()
