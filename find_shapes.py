@@ -77,7 +77,7 @@ def write_shape_with_label(shape, input_card_path, out_dir=SHAPES_OUT_DIR):
   if not os.path.exists(out_dir):
     os.mkdir(out_dir)
   tokens = input_card_path.split('/')[-1].split('-')
-  del tokens[1]
+  tokens[1] = 'single'
   new_filename = '-'.join(tokens)
   print(new_filename)
   write_im(shape, new_filename, out_dir=out_dir)
