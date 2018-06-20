@@ -5,10 +5,11 @@ import os
 import sys
 import cv2
 import numpy as np
+from find_shapes import find_shapes
 from matplotlib import pyplot as plt
 from diffimg import diff as diff_PIL
 from cv2_diff import diff as diff_cv2
-from common import ALL_CARDS_LABELED_DIR
+from common import ALL_CARDS_LABELED_DIR, display_im
 
 def simple_diff(card_file_to_classify, method="PIL"):
   """Diff the given card file against all labeled cards, choose the lowest
@@ -20,7 +21,7 @@ def simple_diff(card_file_to_classify, method="PIL"):
   # diff against all labeled cards, get best score
   for labeled_filename in labeled_filenames:
     labeled_filename_path = os.path.join(ALL_CARDS_LABELED_DIR, labeled_filename)
-    
+
     # image differentiation algorithm using PIL
     if method == 'PIL':
       scores[labeled_filename] = diff_PIL(
@@ -45,14 +46,35 @@ def simple_diff(card_file_to_classify, method="PIL"):
     return None
   return best
 
-def find_shape(shape_to_find, card_to_classify):
-  MIN_MATCH_COUNT = 10
-  img1 = cv2.imread(shape_to_find,0)          # queryImage
-  img2 = cv2.imread(card_to_classify,0) # trainImage
+def keypoints_card(img):
+  THRESH_MIN=100
+  flag, thresh = cv2.threshold(img, THRESH_MIN, 255, cv2.THRESH_BINARY)
+  # Initiate ORB detector
   orb = cv2.ORB_create()
+  # find the keypoints with ORB
+  kp,des = orb.detectAndCompute(img,None)
+  # compute the descriptors with ORB
+  print "KEYPOINTS", len(kp), des
+  # draw only keypoints location,not size and orientation
+  img2 = cv2.drawKeypoints(img, kp, None, color=(0,255,0), flags=0)
+
+def find_shape(shape_to_find, cv_im):
+  MIN_MATCH_COUNT = 10
+  THRESH_MIN=100
+  img1 = cv2.imread(shape_to_find,0)          # queryImage
+  img2 = cv2.cvtColor(cv_im,  cv2.COLOR_BGR2GRAY)
+
+  flag, thresh = cv2.threshold(img2, THRESH_MIN, 255, cv2.THRESH_BINARY)
+
+
+  orb = cv2.ORB_create()
+  orb.setEdgeThreshold(5)
 
   kp1, des1 = orb.detectAndCompute(img1, None)
   kp2, des2 = orb.detectAndCompute(img2, None)
+
+  if des2 is None:
+    return
 
   # create BFMatcher object
   bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
@@ -60,19 +82,12 @@ def find_shape(shape_to_find, card_to_classify):
   matches = bf.match(des1,des2)
   # Sort them in the order of their distance.
   matches = sorted(matches, key = lambda x:x.distance)
-  
-  print shape_to_find, len(matches), sum([m.distance for m in matches[:20]])
 
+  ret = sum([m.distance for m in matches[:10]])
 
-def classify_card(card_file_to_classify):
-  """Classify the card's attributes."""
-  # TODO: more complex methods of classification
-  # simple_diff() works okay for shape and number (so far)
-  # Okay's suggestion for color: quantization/bucketing
-  # Shade: extract shapes as contours, sample the innermost part, greyscale,
-  # and diff against a heavily gaussian blurred square of solid/stripes/outline
-  # so dark grey, light grey, white
+  return ret
 
+def classify_shape(card_file):
   shapes = [
     'green-single-outline-capsule.jpg',
     'green-single-outline-diamond.jpg',
@@ -85,11 +100,50 @@ def classify_card(card_file_to_classify):
     'green-single-stripes-squiggle.jpg',
   ]
 
-  for shape in shapes:
-    shape_file = os.path.join("image-data/shapes", shape)
-    find_shape(shape_file, card_file_to_classify)
+  segments = find_shapes(card_file)
+  ret = []
 
-  return simple_diff(card_file_to_classify)
+  card_im = cv2.imread(card_file)
+  display_im(card_im)
+  for segment in segments:
+    possibles = []
+    for shape in shapes:
+      shape_file = os.path.join("image-data/shapes", shape)
+      score = find_shape(shape_file, segment)
+      if score:
+        possibles.append((score, shape))
+
+    possibles.sort()
+    if possibles:
+      ret.append(possibles[0])
+
+
+  ret.sort()
+  return ret
+
+
+
+def classify_color(card_im):
+  pass
+
+def classify_number(card_im):
+  pass
+
+def classify_fill(card_im):
+  pass
+
+def classify_card(card_file_to_classify):
+  """Classify the card's attributes."""
+  # TODO: more complex methods of classification
+  # simple_diff() works okay for shape and number (so far)
+  # Okay's suggestion for color: quantization/bucketing
+  # Shade: extract shapes as contours, sample the innermost part, greyscale,
+  # and diff against a heavily gaussian blurred square of solid/stripes/outline
+  # so dark grey, light grey, white
+
+  card_im = cv2.imread(card_file_to_classify)
+  shape = classify_shape(card_file_to_classify)
+  print "SHAPE IS", shape
 
 def main():
   card_file_to_classify = sys.argv[1]

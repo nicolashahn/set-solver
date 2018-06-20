@@ -23,23 +23,11 @@ def blur_card(card_filename):
   im = cv2.imread(card_filename, 1)
 
   # filters to make it easier for opencv to find card
-  blur = cv2.GaussianBlur(im,(3,1),1)
+  blur = cv2.GaussianBlur(im,(1,1),1)
   filename = "%s_blurred.png" % (card_filename)
   cv2.imwrite(filename, blur)
 
   return filename
-
-def keypoints_card(card_file_to_classify):
-  img = cv2.imread(card_file_to_classify,0)
-  # Initiate ORB detector
-  orb = cv2.ORB_create()
-  # find the keypoints with ORB
-  kp = orb.detect(img,None)
-  # compute the descriptors with ORB
-  kp, des = orb.compute(img, kp)
-  # draw only keypoints location,not size and orientation
-  img2 = cv2.drawKeypoints(img, kp, None, color=(0,255,0), flags=0)
-  plt.imshow(img2), plt.show()
 
 def noteshrink_card(card_filename):
   img, dpi = noteshrink.load(card_filename)
