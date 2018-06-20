@@ -84,10 +84,11 @@ def write_shape_with_label(shape, input_card_path, out_dir=SHAPES_OUT_DIR):
   write_im(shape, new_filename, out_dir=out_dir)
 
 def main():
-  card_file = sys.argv[1]
-  shapes = find_shapes(card_file, display_shapes=True)
-  # only works with labeled file 
-  # write_shape_with_label(shapes[0], card_file)
+  card_files = sys.argv[1:]
+  for card_file in card_files:
+    shapes = find_shapes(card_file, display_shapes=False)
+    # only works with labeled files
+    write_shape_with_label(shapes[0], card_file)
 
 if __name__ == "__main__":
   main()
