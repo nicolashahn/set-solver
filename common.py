@@ -114,3 +114,25 @@ def rectify(h, portrait=False):
   hnew[bot_l] = h[np.argmax(diff)]
 
   return hnew
+
+def expand_points(points, dist):
+  """Find center of a list of points, then push all points outward by
+  dist pixels from the center.
+  """
+  # get center of points
+  xs = [p[0] for p in points]
+  ys = [p[1] for p in points]
+  midx = max(xs) - ((max(xs) - min(xs)) / 2)
+  midy = max(ys) - ((max(ys) - min(ys)) / 2)
+
+  # push points outward
+  for point in points:
+    x = point[0]
+    y = point[1]
+    xdist = x - midx
+    ydist = y - midy
+    newx = x + dist if xdist > 0 else x - dist
+    newy = y + dist if ydist > 0 else y - dist
+    point[0] = newx
+    point[1] = newy
+  return points

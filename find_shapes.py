@@ -4,7 +4,7 @@
 import cv2
 import sys
 import numpy as np
-from common import display_im, rectify
+from common import display_im, rectify, expand_points
 
 # min channel cutoff for the threshold filter
 THRESH_MIN = 180
@@ -42,6 +42,7 @@ def find_shapes(card_file,
     rectangle = cv2.minAreaRect(contours[i])
     corners = cv2.boxPoints(rectangle)
     corners = rectify(corners, portrait=True)
+    corners = expand_points(corners, 5)
 
     # writes dots for corners of bounding boxes on original image
     # for point in corners:
