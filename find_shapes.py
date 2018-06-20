@@ -50,7 +50,7 @@ def find_shapes(card_file,
     rectangle = cv2.minAreaRect(contours[i])
     corners = cv2.boxPoints(rectangle)
     corners = rectify(corners, portrait=True)
-    # corners = expand_points(corners, 5)
+    corners = expand_points(corners, 15)
 
     # writes dots for corners of bounding boxes on original image
     # for point in corners:
