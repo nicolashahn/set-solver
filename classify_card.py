@@ -132,7 +132,20 @@ def classify_card(card_file_to_classify):
   card_im = cv2.imread(card_file_to_classify)
   shape = classify_shape(card_file_to_classify)
 
-  return shape[0][1]
+  num_shapes = len(shape)
+
+  num_words = [ "", "single", "double", "triple" ][num_shapes]
+
+  if len(shape) > 0:
+    ret = shape[0][1]
+    c,n,f,s = ret.split("-")
+
+    r = "-".join([c, num_words, f, s ])
+    return r
+
+  return ""
+
+
 
 def main():
   card_file_to_classify = sys.argv[1]
