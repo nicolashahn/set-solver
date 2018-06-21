@@ -20,7 +20,7 @@ def main():
 
   res = []
   for color in ('red', 'green', 'purple'):
-    color_files = [f for f in all_files if f.startswith(color)]
+    color_files = [f for f in all_files if f.startswith(color) and f.endswith('.jpg')]
     color_values = [
       shape_rgb(os.path.join(ALL_CARDS_LABELED_DIR,f)) for f in color_files]
     res.append((color, pixels_mean(color_values)))
