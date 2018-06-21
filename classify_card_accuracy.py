@@ -16,13 +16,19 @@ LABELED_CARDS_DIR = os.path.join(SET_GAME_CARDS_DIR, 'setgame{}'.format(GAME_NUM
 def get_score(fle_tuples):
   scores = {key: 0 for key in sorted(CARD_ATTRS.keys())}
   perfect_classifications = 0
+  incorrect = []
   for filename, label, expected in fle_tuples:
     for key in sorted(label.keys()):
       if label[key] == expected[key]:
         scores[key] += 1
     if label == expected:
-      print('{} classified perfectly'.format(filename))
       perfect_classifications += 1
+    else:
+      incorrect.append(filename)
+  if incorrect:
+    print 'Incorrectly labeled:'
+    for filename in incorrect:
+      print(filename)
 
   total_score = 0
   for key in sorted(scores.keys()):

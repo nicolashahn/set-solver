@@ -37,6 +37,7 @@ def noteshrink_card(card_filename):
   ).parse_args()
   options.num_colors = 2
   options.white_bg = True
+  options.quiet = True
 
   if img is None:
     return
