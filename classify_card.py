@@ -5,13 +5,14 @@ import os
 import sys
 import cv2
 import numpy as np
-from find_shapes import find_shapes
+from extract_shapes import extract_shapes
+from process_card import noteshrink_card
 from matplotlib import pyplot as plt
 from diffimg import diff as diff_PIL
 from cv2_diff import diff as diff_cv2
-from common import ALL_CARDS_LABELED_DIR, display_im
+from common import ALL_CARDS_LABELED_DIR, display_im, mean
 
-def simple_diff(card_file_to_classify, method="PIL"):
+def classify_simple_diff(card_file_to_classify, method="PIL"):
   """Diff the given card file against all labeled cards, choose the lowest
   diff valued card. Default diff method is using PIL, can also use cv2.
   """
@@ -92,7 +93,7 @@ def classify_shape(card_file):
   shapes_dir = "image-data/all-shapes"
   shapes = [s for s in os.listdir(shapes_dir) if s[-4:]=='.jpg']
 
-  segments = find_shapes(card_file)
+  segments = extract_shapes(card_file)
   ret = []
 
   card_im = cv2.imread(card_file)
@@ -111,8 +112,47 @@ def classify_shape(card_file):
   ret.sort()
   return ret
 
-def classify_color(card_im):
-  pass
+def pixels_mean(pixels):
+  """Input is a list of (R,G,B) tuples, output is the average (R,G,B) value."""
+  rs = [p[0] for p in pixels]
+  gs = [p[1] for p in pixels]
+  bs = [p[2] for p in pixels]
+  return (mean(rs), mean(gs), mean(bs))
+
+def shape_rgb(card_file):
+  """Returns a tuple (R,G,B) of the average value of all non-white pixels
+  after noteshrinking (which converts near-white to white).
+  """
+  shrunk_file = noteshrink_card(card_file)
+  shrunk_im = cv2.imread(shrunk_file)
+  os.remove(shrunk_file)
+
+  # remove white pixels
+  non_whites = []
+  for row in shrunk_im:
+    for pixel in row:
+      if sum(pixel) < 255*3:
+        non_whites.append(pixel)
+  return pixels_mean(non_whites)
+
+def color_diff(rgb1, rgb2):
+  """Compute diff in two pixel's colors."""
+  return sum([abs(rgb1[i] - rgb2[i]) for i in range(len(rgb1))])
+
+def classify_color(card_file):
+  unclassified_rgb = shape_rgb(card_file)
+
+  # precomputed in avg_colors.py
+  color_avgs = {
+    'red': (0, 34, 226),
+    'green': (64, 123, 0),
+    'purple': (89, 0, 76)
+  }
+
+  dists = {color: color_diff(
+    color_avgs[color], unclassified_rgb) for color in color_avgs}
+
+  return min(dists, key=dists.get)
 
 def classify_number(card_im):
   pass
@@ -123,7 +163,7 @@ def classify_fill(card_im):
 def classify_card(card_file_to_classify):
   """Classify the card's attributes."""
   # TODO: more complex methods of classification
-  # simple_diff() works okay for shape and number (so far)
+  # classify_simple_diff() works okay for shape and number (so far)
   # Okay's suggestion for color: quantization/bucketing
   # Shade: extract shapes as contours, sample the innermost part, greyscale,
   # and diff against a heavily gaussian blurred square of solid/stripes/outline
@@ -131,6 +171,7 @@ def classify_card(card_file_to_classify):
 
   card_im = cv2.imread(card_file_to_classify)
   shape = classify_shape(card_file_to_classify)
+  color = classify_color(card_file_to_classify)
 
   num_shapes = len(shape)
 
@@ -138,9 +179,9 @@ def classify_card(card_file_to_classify):
 
   if len(shape) > 0:
     ret = shape[0][1]
-    c,n,f,s = ret.split("-")
+    _,n,f,s = ret.split("-")
 
-    r = "-".join([c, num_words, f, s ])
+    r = "-".join([color, num_words, f, s ])
     return r
 
   return ""

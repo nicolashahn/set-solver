@@ -20,7 +20,7 @@ THRESH_MIN = 180
 OUT_WIDTH = 100
 OUT_HEIGHT = 200
 
-def find_shapes(card_file, 
+def extract_shapes(card_file, 
                 out_w=OUT_WIDTH,
                 out_h=OUT_HEIGHT,
                 display_shapes=False):
@@ -86,7 +86,7 @@ def write_shape_with_label(shape, input_card_path, out_dir=SHAPES_OUT_DIR):
 def main():
   card_files = sys.argv[1:]
   for card_file in card_files:
-    shapes = find_shapes(card_file, display_shapes=False)
+    shapes = extract_shapes(card_file, display_shapes=False)
     # only works with labeled files
     write_shape_with_label(shapes[0], card_file)
 

@@ -189,7 +189,7 @@ def percent(string):
 
 ######################################################################
 
-def get_argument_parser():
+def get_argument_parser(filenames=[]):
 
     '''Parse the command-line arguments for this program.'''
 
@@ -198,8 +198,8 @@ def get_argument_parser():
 
     show_default = ' (default %(default)s)'
 
-    parser.add_argument('filenames', metavar='IMAGE', nargs='+',
-                        help='files to convert')
+    parser.add_argument('filenames', metavar='IMAGE', nargs='*',
+                        help='files to convert', default=filenames)
 
     parser.add_argument('-q', dest='quiet', action='store_true',
                         default=False,

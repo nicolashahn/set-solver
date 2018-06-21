@@ -31,8 +31,12 @@ def blur_card(card_filename):
 
 def noteshrink_card(card_filename):
   img, dpi = noteshrink.load(card_filename)
-  options = noteshrink.get_argument_parser().parse_args()
-  options.num_colors = 10
+  options = noteshrink.get_argument_parser(
+    # hack to give a required argument from outside sys.argv
+    filenames=[card_filename]
+  ).parse_args()
+  options.num_colors = 2
+  options.white_bg = True
 
   if img is None:
     return
