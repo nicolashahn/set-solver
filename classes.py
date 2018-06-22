@@ -62,8 +62,11 @@ class SetGame(Cv2Image):
   def draw_sets(self):
     """Update original game image with sets highlighted."""
     for cards in self.sets:
-      color = (randint(0,255), randint(0,255), randint(0,255))
+      low = 100
+      high = 255
+      color = (randint(low,high), randint(low,high), randint(low,high))
       for card in cards:
-        for p in card.corners:
-          #TODO make this draw a box instead of just corner dots
-          cv2.circle(self.im, (p[0], p[1]), 0, color, self.im.shape[0]/100)
+        for i in range(-1,len(card.corners)-1):
+          p1 = (card.corners[i][0], card.corners[i][1])
+          p2 = (card.corners[i+1][0], card.corners[i+1][1])
+          cv2.line(self.im, p1, p2, color, self.im.shape[0]/100)

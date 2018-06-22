@@ -23,8 +23,8 @@ def solve_set(game_filename):
 
 def main():
   solved_game = solve_set(sys.argv[1])
-  solved_game.display()
   print(solved_game.sets)
+  solved_game.display()
 
 if __name__ == "__main__":
   main()
