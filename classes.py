@@ -65,4 +65,5 @@ class SetGame(Cv2Image):
       color = (randint(0,255), randint(0,255), randint(0,255))
       for card in cards:
         for p in card.corners:
+          #TODO make this draw a box instead of just corner dots
           cv2.circle(self.im, (p[0], p[1]), 0, color, self.im.shape[0]/100)
