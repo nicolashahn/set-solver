@@ -8,7 +8,9 @@ from classify_card import classify_card_from_im
 from classes import Card, SetGame
 
 def solve_set(game_filename):
-  game_filename = sys.argv[1]
+  """Given a game image, find the sets in the image, and return the
+  SetGame object with the sets indicated on the original image.
+  """
   game = SetGame(game_filename)
   card_ims_with_corners = find_cards(game_filename, with_corners=True)
   for im, corner in card_ims_with_corners:
