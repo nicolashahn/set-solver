@@ -180,6 +180,7 @@ def classify_card(card_file_to_classify):
   if len(shape) > 0:
     ret = shape[0][1]
     _,n,f,s = ret.split("-")
+    c,n,f,s = ret.split("-")
 
     r = "-".join([color, num_words, f, s ])
     return r

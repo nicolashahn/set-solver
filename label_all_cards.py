@@ -10,10 +10,10 @@ import cv2
 import card_finder
 
 IN_FILENAMES = """
-  image-data/set-games/setgame8.jpg
+  image-data/set-games/setgame5.jpg
 """.split()
 
-OUT_DIR = 'image-data/set-game-cards/setgame8'
+OUT_DIR = 'image-data/set-game-cards/setgame5'
 
 CARD_ATTRS = {
   'shade': ['solid', 'stripes', 'outline'],

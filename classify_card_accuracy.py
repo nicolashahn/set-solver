@@ -21,6 +21,8 @@ def get_score(fle_tuples):
     for key in sorted(label.keys()):
       if label[key] == expected[key]:
         scores[key] += 1
+      else:
+        print filename, "EXPECTED", expected[key], "BUT GOT", label[key]
     if label == expected:
       perfect_classifications += 1
     else:
@@ -67,7 +69,9 @@ def test_cards_in_dir(labeled_cards_dir=LABELED_CARDS_DIR):
   return get_score(fle_tuples)
   
 def main():
-  test_cards_in_dir()
+  for game_num in [ 4, 5, 6, 7, 8 ]:
+      labeled_card_dir = os.path.join(SET_GAME_CARDS_DIR, 'setgame{}'.format(game_num))
+      test_cards_in_dir(labeled_card_dir)
 
 if __name__ == "__main__":
   main()
