@@ -60,7 +60,8 @@ def remove_contour_outliers(contours):
 def find_cards(filename,
                out_w=OUT_WIDTH,
                out_h=OUT_HEIGHT,
-               display_points=False):
+               display_points=False,
+               with_corners=False):
   """Find SET game cards in image and return as a list of images."""
   # 1 = color, 0 = gray, -1 = color+alpha
   orig_im = cv2.imread(filename, 1)
@@ -111,7 +112,10 @@ def find_cards(filename,
       transform = cv2.getPerspectiveTransform(approx,h)
       warp = cv2.warpPerspective(orig_im,transform,(out_w,out_h))
       if not display_points:
-        yield warp
+        if with_corners:
+          yield (warp, approx)
+        else:
+          yield warp
 
   if display_points:
     display_im(orig_im)

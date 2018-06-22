@@ -29,7 +29,15 @@ def blur_card(card_filename):
 
   return filename
 
-def noteshrink_card(card_filename):
+def noteshrink_card_from_im(card_im):
+  #TODO make this not have to write to file
+  tmp_file = write_im(card_im, 'tmp.jpg')
+  noteshrunk_file = noteshrink_card_from_file(tmp_file)
+  noteshrunk_im = cv2.imread(noteshrunk_file, 1)
+  os.remove(noteshrunk_file)
+  return noteshrunk_im
+
+def noteshrink_card_from_file(card_filename):
   img, dpi = noteshrink.load(card_filename)
   options = noteshrink.get_argument_parser(
     # hack to give a required argument from outside sys.argv
@@ -50,12 +58,11 @@ def noteshrink_card(card_filename):
   labels = noteshrink.apply_palette(img, palette, options)
 
   noteshrink.save(output_filename, labels, palette, dpi, options)
-  cv2_im = cv2.imread(output_filename, 1)
   return output_filename
 
 def process_card(card_filename):
   blurred = blur_card(card_filename)
-  shrunk_card = noteshrink_card(blurred)
+  shrunk_card = noteshrink_card_from_file(blurred)
   # keypoints_card(shrunk_card)
   # TODO return image in correct format
   return

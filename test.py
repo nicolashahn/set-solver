@@ -7,7 +7,7 @@ import unittest
 from common import IM_DATA_DIR
 import card_finder as cf
 import classify_card as cc
-import find_shapes as fs
+import extract_shapes as es
 
 TMP_DIR = 'tmp'
 TEST_DATA_DIR = os.path.join(IM_DATA_DIR, 'test')
@@ -42,14 +42,14 @@ class TestAll(unittest.TestCase):
     expected_label = 'purple-triple-solid-capsule.jpg'
 
     self.assertEqual(
-      cc.classify_card(SAMPLE_CARD),
+      cc.classify_card_from_file(SAMPLE_CARD),
       expected_label
     )
 
   def test_find_shapes_e2e(self):
     # only checks that we get the right number of shapes back
     self.assertEqual(
-      len(fs.find_shapes(SAMPLE_CARD)),
+      len(es.extract_shapes_from_file(SAMPLE_CARD)),
       3
     )
 

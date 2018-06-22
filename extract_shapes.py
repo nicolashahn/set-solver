@@ -20,18 +20,12 @@ THRESH_MIN = 180
 OUT_WIDTH = 100
 OUT_HEIGHT = 200
 
-def extract_shapes(card_file, 
+def extract_shapes_from_im(card_im, 
                 out_w=OUT_WIDTH,
                 out_h=OUT_HEIGHT,
                 display_shapes=False):
-  """Given a card image file, cut out and return the 1, 2, or 3 shapes
-  on the card. Returns a list of lists of 4 points, corner coordinates of
-  each bounding box.
-  """
-  # a lot of this function is the same as card_finder.py's find_cards,
-  # TODO refactor for both to inherit from a common function
-  orig_im = cv2.imread(card_file, 1)
-  im = cv2.imread(card_file, 0)
+  orig_im = card_im
+  im = cv2.cvtColor(orig_im, cv2.COLOR_BGR2GRAY)
   blur = cv2.GaussianBlur(im,(1,1),1000)
   flag, thresh = cv2.threshold(blur, THRESH_MIN, 255, cv2.THRESH_BINARY)
 
@@ -71,6 +65,20 @@ def extract_shapes(card_file,
 
   return shapes
 
+def extract_shapes_from_file(card_file, 
+                out_w=OUT_WIDTH,
+                out_h=OUT_HEIGHT,
+                display_shapes=False):
+  """Given a card image file, cut out and return the 1, 2, or 3 shapes
+  on the card. Returns a list of lists of 4 points, corner coordinates of
+  each bounding box.
+  """
+  # a lot of this function is the same as card_finder.py's find_cards,
+  # TODO refactor for both to inherit from a common function
+  orig_im = cv2.imread(card_file, 1)
+  return extract_shapes_from_im(
+    orig_im, out_w=out_w, out_h=out_h, display_shapes=display_shapes)
+
 def write_shape_with_label(shape, input_card_path, out_dir=SHAPES_OUT_DIR):
   """Writes shape to a filename built from a labeled card file, replacing
   its number with 'single'.
@@ -86,7 +94,7 @@ def write_shape_with_label(shape, input_card_path, out_dir=SHAPES_OUT_DIR):
 def main():
   card_files = sys.argv[1:]
   for card_file in card_files:
-    shapes = extract_shapes(card_file, display_shapes=False)
+    shapes = extract_shapes_from_file(card_file, display_shapes=False)
     # only works with labeled files
     write_shape_with_label(shapes[0], card_file)
 

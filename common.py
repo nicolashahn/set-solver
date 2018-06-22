@@ -53,6 +53,7 @@ def write_im(im,
   cv2.imwrite(out_path, im)
   if print_path:
     print(out_path)
+  return out_path
 
 def display_im(im, imgname='image', resize=True):
   """Displays image, waits for any key press, then closes windows."""
@@ -135,3 +136,7 @@ def scale_points(points, scale):
     point[0] = newx
     point[1] = newy
   return points
+
+def label_to_dict(label):
+  tokens = [t.split('.')[0] for t in label.split('-')]
+  return dict(zip(sorted(CARD_ATTRS.keys()), tokens))
