@@ -1,6 +1,8 @@
 # set-solver
 Solve the SET card game using OpenCV. Image of a game of set -> same image with labeled sets. Under construction.
 
+![Solved set game][image-data/solved/solved11.png]
+
 ## Setup
 
 ### 1. Install OpenCV
