@@ -59,14 +59,25 @@ class SetGame(Cv2Image):
     self.sets = [c for c in combos if self.is_set(*c)]
     return self.sets
 
+  def print_sets(self):
+    if not self.sets:
+      print 'No sets found'
+    else:
+      print '{} sets found'.format(len(self.sets))
+      for i, cards in enumerate(self.sets):
+        print 'Set {}:'.format(i+1)
+        for card in cards:
+          print card.label
+
   def draw_sets(self):
     """Update original game image with sets highlighted."""
+    low = 100
+    high = 255
+    line_thickness = self.im.shape[0]/100
     for cards in self.sets:
-      low = 100
-      high = 255
-      color = (randint(low,high), randint(low,high), randint(low,high))
+      color = [randint(low,high) for _ in range(3)]
       for card in cards:
         for i in range(-1,len(card.corners)-1):
           p1 = (card.corners[i][0], card.corners[i][1])
           p2 = (card.corners[i+1][0], card.corners[i+1][1])
-          cv2.line(self.im, p1, p2, color, self.im.shape[0]/100)
+          cv2.line(self.im, p1, p2, color, line_thickness)

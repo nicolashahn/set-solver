@@ -24,7 +24,7 @@ def solve_set(game_filename):
 
 def main():
   solved_game = solve_set(sys.argv[1])
-  print(solved_game.sets)
+  solved_game.print_sets()
   clean_make_dir(SOLVE_OUT)
   write_im(solved_game.im, 'solved.jpg', out_dir=SOLVE_OUT)
   solved_game.display()

@@ -139,5 +139,8 @@ def scale_points(points, scale):
   return points
 
 def label_to_dict(label):
+  """Convert a label like 'red-triple-stripes-squiggle.jpg' to 
+  {'color':'red', 'number':'triple'...etc}
+  """
   tokens = [t.split('.')[0] for t in label.split('-')]
   return dict(zip(sorted(CARD_ATTRS.keys()), tokens))
