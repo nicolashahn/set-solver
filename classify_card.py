@@ -157,6 +157,8 @@ def classify_fill(card_im):
   pass
 
 def classify_card_from_im(card_im):
+  """Classify the card's attributes, returning a label like
+  red-triple-outline-squiggle.jpg."""
   shapes = get_shapes_with_scores(card_im)
   color = classify_color(card_im)
   number = classify_number_from_shapes(shapes)
@@ -171,9 +173,7 @@ def classify_card_from_im(card_im):
   return ""
 
 def classify_card_from_file(card_file_to_classify):
-  """Classify the card's attributes."""
   card_im = cv2.imread(card_file_to_classify)
-
   return classify_card_from_im(card_im)
 
 def main():
