@@ -31,9 +31,7 @@ def blur_card(card_filename):
 
 def noteshrink_card_from_im(card_im):
   #TODO make this not have to write to file
-  copy = np.copy(card_im)
-  copy = shrink(copy, max_dim=90)
-  tmp_file = write_im(copy, 'tmp.jpg')
+  tmp_file = write_im(card_im, 'tmp.jpg')
   noteshrunk_file = noteshrink_card_from_file(tmp_file)
   noteshrunk_im = cv2.imread(noteshrunk_file, 1)
   os.remove(noteshrunk_file)
@@ -41,6 +39,7 @@ def noteshrink_card_from_im(card_im):
 
 def noteshrink_card_from_file(card_filename):
   img, dpi = noteshrink.load(card_filename)
+  img = shrink(img, max_dim=90)
   options = noteshrink.get_argument_parser(
     # hack to give a required argument from outside sys.argv
     filenames=[card_filename]
