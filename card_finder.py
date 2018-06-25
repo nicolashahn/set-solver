@@ -17,7 +17,6 @@ from common import (
   display_im,
   mean,
   median,
-  shrink,
   rectify
 )
 

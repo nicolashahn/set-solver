@@ -7,7 +7,7 @@ import sys
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-from common import PROCESS_CARD_OUT_DIR, write_im, display_im
+from common import PROCESS_CARD_OUT_DIR, write_im, display_im, shrink
 
 from vendor import noteshrink
 
@@ -31,7 +31,9 @@ def blur_card(card_filename):
 
 def noteshrink_card_from_im(card_im):
   #TODO make this not have to write to file
-  tmp_file = write_im(card_im, 'tmp.jpg')
+  copy = np.copy(card_im)
+  copy = shrink(copy, max_dim=90)
+  tmp_file = write_im(copy, 'tmp.jpg')
   noteshrunk_file = noteshrink_card_from_file(tmp_file)
   noteshrunk_im = cv2.imread(noteshrunk_file, 1)
   os.remove(noteshrunk_file)

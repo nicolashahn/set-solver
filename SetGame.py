@@ -24,9 +24,7 @@ class Cv2Image(object):
 
 class Card(Cv2Image):
 
-  def __init__(self,
-               im,
-               corners):
+  def __init__(self, im, corners):
     self.im = im
     # list of (x,y) tuples mapping to the corners of the card in original im
     self.corners = corners
