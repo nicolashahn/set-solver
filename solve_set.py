@@ -6,6 +6,7 @@ from tqdm import tqdm
 from card_finder import find_cards
 from classify_card import classify_card_from_im
 from classes import Card, SetGame
+from common import SOLVE_OUT, write_im, clean_make_dir
 
 def solve_set(game_filename):
   """Given a game image, find the sets in the image, and return the
@@ -24,6 +25,8 @@ def solve_set(game_filename):
 def main():
   solved_game = solve_set(sys.argv[1])
   print(solved_game.sets)
+  clean_make_dir(SOLVE_OUT)
+  write_im(solved_game.im, 'solved.jpg', out_dir=SOLVE_OUT)
   solved_game.display()
 
 if __name__ == "__main__":

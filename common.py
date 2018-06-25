@@ -14,6 +14,7 @@ import numpy as np
 CARD_FINDER_OUT_DIR = 'finder-out'
 PROCESS_CARD_OUT_DIR = 'process-out'
 SHAPES_OUT_DIR = 'shapes-out'
+SOLVE_OUT = 'solve-out'
 
 IM_DATA_DIR = 'image-data'
 
@@ -87,7 +88,7 @@ def shrink(im, max_dim=1000):
 
   # only resizes if does not fit in max_dim
   if ratio < 1:
-    im = cv2.resize(im, (0,0), fx=ratio, fy=ratio)
+    im = cv2.resize(im, (0,0), fx=ratio, fy=ratio, interpolation=cv2.INTER_AREA)
   return im
 
 def rectify(h, portrait=False):
