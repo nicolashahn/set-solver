@@ -273,6 +273,11 @@ def get_argument_parser(filenames=[]):
     parser.add_argument('-c', dest='pdf_cmd', metavar="COMMAND",
                         default='convert %i %o',
                         help='PDF command (default "%(default)s")')
+    # these are here just so solve_set.py's arg parser can run
+    # and this parser won't complain about missing flags
+    # TODO fix this disgusting hack or extract the parser here entirely
+    parser.add_argument('--write', dest='write', action='store_true')
+    parser.add_argument('--display', dest='display', action='store_true')
 
     return parser
 

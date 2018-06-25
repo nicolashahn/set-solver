@@ -26,6 +26,7 @@ SET_GAME_CARDS_DIR = os.path.join(IM_DATA_DIR, 'set-game-cards')
 
 # all cards labeled
 ALL_CARDS_LABELED_DIR = os.path.join(IM_DATA_DIR, 'all-cards', 'labeled')
+ALL_SHAPES_DIR = os.path.join(IM_DATA_DIR, 'all-shapes')
 
 # the 4 possible attributes of a card
 CARD_ATTRS = {

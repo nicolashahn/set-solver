@@ -10,7 +10,7 @@ from process_card import noteshrink_card_from_im
 from matplotlib import pyplot as plt
 from diffimg import diff as diff_PIL
 from cv2_diff import diff as diff_cv2
-from common import ALL_CARDS_LABELED_DIR, display_im, mean
+from common import ALL_CARDS_LABELED_DIR, ALL_SHAPES_DIR, display_im, mean
 
 def classify_simple_diff(card_file_to_classify, method="PIL"):
   """Diff the given card file against all labeled cards, choose the lowest
@@ -47,9 +47,8 @@ def classify_simple_diff(card_file_to_classify, method="PIL"):
     return None
   return best
 
-def keypoints_card(img):
-  THRESH_MIN=100
-  flag, thresh = cv2.threshold(img, THRESH_MIN, 255, cv2.THRESH_BINARY)
+def keypoints_card(img, thresh_min=100):
+  flag, thresh = cv2.threshold(img, thresh_min, 255, cv2.THRESH_BINARY)
   # Initiate ORB detector
   orb = cv2.ORB_create()
   # find the keypoints with ORB
@@ -59,14 +58,12 @@ def keypoints_card(img):
   # draw only keypoints location,not size and orientation
   img2 = cv2.drawKeypoints(img, kp, None, color=(0,255,0), flags=0)
 
-def find_shape(shape_to_find, cv_im):
-  MIN_MATCH_COUNT = 10
-  THRESH_MIN=100
-  img1 = cv2.imread(shape_to_find,0)          # queryImage
+def find_shape(shape_to_find, cv_im, min_match_ct=10, thresh_min=100):
+  """Use ORB to get a match score for image file shape_to_find and cv_im."""
+  img1 = cv2.imread(shape_to_find,0)
   img2 = cv2.cvtColor(cv_im,  cv2.COLOR_BGR2GRAY)
 
-  flag, thresh = cv2.threshold(img2, THRESH_MIN, 255, cv2.THRESH_BINARY)
-
+  flag, thresh = cv2.threshold(img2, thresh_min, 255, cv2.THRESH_BINARY)
 
   orb = cv2.ORB_create()
   orb.setEdgeThreshold(5)
@@ -84,13 +81,14 @@ def find_shape(shape_to_find, cv_im):
   # Sort them in the order of their distance.
   matches = sorted(matches, key = lambda x:x.distance)
 
-  ret = sum([m.distance for m in matches[:10]])
+  ret = sum([m.distance for m in matches[:min_match_ct]])
 
   return ret
 
-def classify_shape(card_im):
-  # change `all-shapes` to `shapes` to go back to using single green cards
-  shapes_dir = "image-data/all-shapes"
+def get_shapes_with_scores(card_im, shapes_dir=ALL_SHAPES_DIR):
+  """Test card image against all shapes in shapes_dir, and return tuples
+  (score, label) for the best matches.
+  """
   shapes = [s for s in os.listdir(shapes_dir) if s[-4:]=='.jpg']
 
   segments = extract_shapes_from_im(card_im)
@@ -151,25 +149,23 @@ def classify_color(card_im):
 
   return min(dists, key=dists.get)
 
-def classify_number(card_im):
-  pass
+def classify_number_from_shapes(shapes):
+  num_shapes = len(shapes)
+  return [ "", "single", "double", "triple" ][num_shapes]
 
 def classify_fill(card_im):
   pass
 
 def classify_card_from_im(card_im):
-  shape = classify_shape(card_im)
+  shapes = get_shapes_with_scores(card_im)
   color = classify_color(card_im)
+  number = classify_number_from_shapes(shapes)
 
-  num_shapes = len(shape)
-
-  num_words = [ "", "single", "double", "triple" ][num_shapes]
-
-  if len(shape) > 0:
-    ret = shape[0][1]
+  if len(shapes) > 0:
+    ret = shapes[0][1]
     _,n,f,s = ret.split("-")
 
-    r = "-".join([color, num_words, f, s ])
+    r = "-".join([color, number, f, s ])
     return r
 
   return ""
