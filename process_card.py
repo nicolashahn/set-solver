@@ -37,9 +37,9 @@ def noteshrink_card_from_im(card_im):
   os.remove(noteshrunk_file)
   return noteshrunk_im
 
-def noteshrink_card_from_file(card_filename):
+def noteshrink_card_from_file(card_filename, shrink_max_dim=120):
   img, dpi = noteshrink.load(card_filename)
-  img = shrink(img, max_dim=90)
+  img = shrink(img, max_dim=shrink_max_dim)
   options = noteshrink.get_argument_parser(
     # hack to give a required argument from outside sys.argv
     filenames=[card_filename]

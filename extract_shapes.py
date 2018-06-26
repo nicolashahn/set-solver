@@ -47,8 +47,8 @@ def extract_shapes_from_im(card_im,
     corners = scale_points(corners, 1.15)
 
     # writes dots for corners of bounding boxes on original image
-    # for point in corners:
-      # cv2.circle(orig_im, (point[0], point[1]), 0, (0,255,0), im.shape[0]/100)
+    # for point in corner:
+      # cv2.circle(orig_im, (point[0], point[1]), 0, (0,0,255), im.shape[0]/50)
 
     # create an image of just the shape
     h = np.array([ 

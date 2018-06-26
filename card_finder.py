@@ -97,7 +97,6 @@ def find_cards(filename,
       approx = rectify(approx)
 
       if display_points:
-        display_im(approx)
         for point in approx:
           cv2.circle(orig_im, (point[0], point[1]), 0, (0,0,255), im.shape[0]/100)
 

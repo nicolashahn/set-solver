@@ -63,7 +63,8 @@ def find_shape(shape_to_find, cv_im, min_match_ct=10, thresh_min=100):
   img1 = cv2.imread(shape_to_find,0)
   img2 = cv2.cvtColor(cv_im,  cv2.COLOR_BGR2GRAY)
 
-  flag, thresh = cv2.threshold(img2, thresh_min, 255, cv2.THRESH_BINARY)
+  img1 = cv2.Canny(img1, 100,200)
+  img2 = cv2.Canny(img2, 100,200)
 
   orb = cv2.ORB_create()
   orb.setEdgeThreshold(5)
