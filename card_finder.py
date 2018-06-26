@@ -35,7 +35,7 @@ OUT_HEIGHT = 300
 # min channel cutoff for the threshold filter
 THRESH_MIN = 180
 # how much a contour's area can differ from the mean of the top MAXCARDS
-CONTOUR_AREA_TOLERANCE = 2.0
+CONTOUR_AREA_TOLERANCE = 2.5
 
 def game_img_filename(n):
   return GAME_FILE_FMT.format(n)
