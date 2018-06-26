@@ -89,6 +89,8 @@ class SetGame(Cv2Image):
     line_thickness = self.im.shape[0]/100
     for cards in self.sets:
       color = [randint(low,high) for _ in range(3)]
+      # so it doesn't end up white or near white
+      color[randint(0,2)] = 0
       for card in cards:
         for i in range(-1,len(card.corners)-1):
           p1 = (card.corners[i][0], card.corners[i][1])
