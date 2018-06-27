@@ -60,18 +60,16 @@ class SetGame(Cv2Image):
       card.label = classify_card_from_im(card.im)
 
   @staticmethod
-  def is_set(card1, card2, card3):
-    for attr in card1.attrs.keys():
-      if len(set([card1.attrs[attr],
-                  card2.attrs[attr],
-                  card3.attrs[attr]])) == 2:
+  def is_set(cards):
+    for attr in cards[0].attrs.keys():
+      if len(set([card.attrs[attr] for card in cards])) == 2:
         return False
     return True
 
   def find_sets(self):
     """Try all combinations of 3 cards to find sets."""
     combos = combinations(self.cards, 3)
-    self.sets = [c for c in combos if self.is_set(*c)]
+    self.sets = [c for c in combos if self.is_set(c)]
     return self.sets
 
   def print_sets(self):
