@@ -72,8 +72,9 @@ def test_cards_in_dir(labeled_cards_dir=LABELED_CARDS_DIR):
   
 def main():
   for game_num in [ 4, 5, 7, 8, 10, 11 ]:
-      labeled_card_dir = os.path.join(SET_GAME_CARDS_DIR, 'setgame{}'.format(game_num))
-      test_cards_in_dir(labeled_card_dir)
+    print('\nGame #{}'.format(game_num))
+    labeled_card_dir = os.path.join(SET_GAME_CARDS_DIR, 'setgame{}'.format(game_num))
+    test_cards_in_dir(labeled_card_dir)
 
 if __name__ == "__main__":
   main()
