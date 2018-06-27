@@ -82,7 +82,7 @@ class SetGame(Cv2Image):
       for i, cards in enumerate(self.sets):
         print 'Set {}:'.format(i+1)
         for card in cards:
-          print '  {}'.format(card.label)
+          print '  {}'.format(card.label.split('.')[0])
 
   def draw_sets(self):
     """Update original game image with sets highlighted."""
