@@ -58,6 +58,31 @@ def keypoints_card(img, thresh_min=100):
   # draw only keypoints location,not size and orientation
   img2 = cv2.drawKeypoints(img, kp, None, color=(0,255,0), flags=0)
 
+def find_fill(shape_to_find, cv_im, min_match_ct=10, thresh_min=100):
+  """Use ORB to get a match score for image file shape_to_find and cv_im."""
+  img1 = cv2.imread(shape_to_find,0)
+  img2 = cv2.cvtColor(cv_im,  cv2.COLOR_BGR2GRAY)
+
+  orb = cv2.ORB_create()
+  orb.setEdgeThreshold(5)
+
+  kp1, des1 = orb.detectAndCompute(img1, None)
+  kp2, des2 = orb.detectAndCompute(img2, None)
+
+  if des2 is None:
+    return
+
+  # create BFMatcher object
+  bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+  # Match descriptors.
+  matches = bf.match(des1,des2)
+  # Sort them in the order of their distance.
+  matches = sorted(matches, key = lambda x:x.distance)
+
+  ret = sum([m.distance for m in matches[:min_match_ct]])
+
+  return ret
+
 def find_shape(shape_to_find, cv_im, min_match_ct=10, thresh_min=100):
   """Use ORB to get a match score for image file shape_to_find and cv_im."""
   img1 = cv2.imread(shape_to_find,0)
@@ -84,6 +109,30 @@ def find_shape(shape_to_find, cv_im, min_match_ct=10, thresh_min=100):
 
   ret = sum([m.distance for m in matches[:min_match_ct]])
 
+  return ret
+
+def get_fills_with_scores(card_im, shapes_dir=ALL_SHAPES_DIR):
+  """Test card image against all shapes in shapes_dir, and return tuples
+  (score, label) for the best matches.
+  """
+  shapes = [s for s in os.listdir(shapes_dir) if s[-4:]=='.jpg']
+
+  segments = extract_shapes_from_im(card_im)
+  ret = []
+
+  for segment in segments:
+    possibles = []
+    for shape in shapes:
+      shape_file = os.path.join(shapes_dir, shape)
+      score = find_fill(shape_file, segment)
+      if score:
+        possibles.append((score, shape))
+
+    possibles.sort()
+    if possibles:
+      ret.append(possibles[0])
+
+  ret.sort()
   return ret
 
 def get_shapes_with_scores(card_im, shapes_dir=ALL_SHAPES_DIR):
@@ -161,12 +210,16 @@ def classify_card_from_im(card_im):
   """Classify the card's attributes, returning a label like
   red-triple-outline-squiggle.jpg."""
   shapes = get_shapes_with_scores(card_im)
+  fills = get_fills_with_scores(card_im)
   color = classify_color(card_im)
   number = classify_number_from_shapes(shapes)
 
   if len(shapes) > 0:
     ret = shapes[0][1]
     _,n,f,s = ret.split("-")
+
+    ret = fills[0][1]
+    _, _, f, _ = ret.split("-")
 
     r = "-".join([color, number, f, s ])
     return r
