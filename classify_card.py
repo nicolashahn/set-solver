@@ -203,9 +203,6 @@ def classify_number_from_shapes(shapes):
   num_shapes = len(shapes)
   return [ "", "single", "double", "triple" ][num_shapes]
 
-def classify_fill(card_im):
-  pass
-
 def classify_card_from_im(card_im):
   """Classify the card's attributes, returning a label like
   red-triple-outline-squiggle.jpg."""
