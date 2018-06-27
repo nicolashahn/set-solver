@@ -112,7 +112,8 @@ class SetGame(Cv2Image):
           cv2.line(self.im, p1, p2, color, line_thickness)
 
   def write_im(self, filename, out_dir=SOLVE_OUT):
-    clean_make_dir(SOLVE_OUT)
+    if out_dir == SOLVE_OUT:
+      clean_make_dir(out_dir)
     return write_im(self.im, filename, out_dir=SOLVE_OUT)
 
   def solve(self):
