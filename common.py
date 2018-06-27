@@ -125,7 +125,16 @@ def rectify(h, portrait=False):
   return hnew
 
 def scale_points(points, scale):
-  """Scale a list of points outwards from the center."""
+  """Scale a list of points outwards from the center. `scale` arg can either
+  be an float or tuples of floats, for (xscale, yscale).
+  """
+  if type(scale) == tuple:
+    xscale = scale[0]
+    yscale = scale[1]
+  else:
+    xscale = scale
+    yscale = scale
+
   # get center of points
   xs = [p[0] for p in points]
   ys = [p[1] for p in points]
@@ -138,8 +147,8 @@ def scale_points(points, scale):
     y = point[1]
     xdist = x - midx
     ydist = y - midy
-    newx = midx + xdist*scale
-    newy = midy + ydist*scale
+    newx = midx + xdist*xscale
+    newy = midy + ydist*yscale
     point[0] = newx
     point[1] = newy
   return points

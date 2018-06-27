@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 """SetGame class and some helper classes."""
 
-from random import randint
-from itertools import combinations
+from random import randint, shuffle
+from itertools import permutations, combinations
 import cv2
+import numpy as np
 from tqdm import tqdm
 from common import (
   SOLVE_OUT,
   clean_make_dir,
   display_im,
   write_im,
-  label_to_dict
+  label_to_dict,
+  scale_points
 )
 from classify_card import classify_card_from_im
 from card_finder import find_cards
@@ -84,17 +86,29 @@ class SetGame(Cv2Image):
 
   def draw_sets(self):
     """Update original game image with sets highlighted."""
-    low = 100
-    high = 255
-    line_thickness = self.im.shape[0]/100
-    for cards in self.sets:
-      color = [randint(low,high) for _ in range(3)]
-      # so it doesn't end up white or near white
-      color[randint(0,2)] = 0
+    # base line thickness (thins for each additional box)
+    base_thickness = self.im.shape[0]/100
+    # how many boxes are around each card
+    card_boxes = {card:0 for card in self.cards}
+
+    colors = list(set(list(permutations([102,102,230])) + \
+                      list(permutations([102,178,230]))))
+    shuffle(colors)
+    for i, cards in enumerate(self.sets):
+      # generate a random color for each set's boxes
+      color = colors[i]
+
       for card in cards:
-        for i in range(-1,len(card.corners)-1):
-          p1 = (card.corners[i][0], card.corners[i][1])
-          p2 = (card.corners[i+1][0], card.corners[i+1][1])
+        # make box bigger if card already has box(es)
+        xscale = card_boxes[card]*0.08 + 1.0
+        yscale = card_boxes[card]*0.12 + 1.0
+        line_thickness = base_thickness - card_boxes[card]*10
+        card_boxes[card] += 1
+        corners = scale_points(np.copy(card.corners), (xscale, yscale))
+
+        for pt in range(-1,len(card.corners)-1):
+          p1 = (corners[pt][0], corners[pt][1])
+          p2 = (corners[pt+1][0], corners[pt+1][1])
           cv2.line(self.im, p1, p2, color, line_thickness)
 
   def write_im(self, filename, out_dir=SOLVE_OUT):
