@@ -50,8 +50,9 @@ def get_score(fle_tuples):
   overall_accuracy = float(total_score) / float(total_possible)
   print('Overall accuracy: {}%'.format(overall_accuracy * 100))
 
-  print('Perfect (full card) classifications: {} / {}'.format(
-        perfect_classifications, len(fle_tuples)))
+  perfect_accuracy = 100 * float(perfect_classifications) / len(fle_tuples)
+  print('Perfect (full card) classifications: {} / {} - {}%'.format(
+        perfect_classifications, len(fle_tuples), perfect_accuracy))
 
   return overall_accuracy
 
@@ -62,19 +63,30 @@ def test_cards_in_dir(labeled_cards_dir=LABELED_CARDS_DIR):
   """
   fle_tuples = []
   filenames = jpgs_in_dir(labeled_cards_dir)
+
   for filename in tqdm(filenames):
     full_path = os.path.join(labeled_cards_dir, filename)
     label = classify_card_from_file(full_path)
     label_dict = label_to_dict(label)
     expected_dict = label_to_dict(filename)
     fle_tuples.append((filename, label_dict, expected_dict))
-  return get_score(fle_tuples)
+
+  return fle_tuples
   
 def main():
+  all_runs = []
   for game_num in [ 4, 5, 7, 8, 10, 11 ]:
-    print('\nGame #{}'.format(game_num))
-    labeled_card_dir = os.path.join(SET_GAME_CARDS_DIR, 'setgame{}'.format(game_num))
-    test_cards_in_dir(labeled_card_dir)
+      print ""
+      labeled_card_dir = os.path.join(SET_GAME_CARDS_DIR, 'setgame{}'.format(game_num))
+      this_run = test_cards_in_dir(labeled_card_dir)
+      print "SCORE FOR GAME %s" % game_num
+      get_score(this_run)
+
+      all_runs.extend(this_run)
+
+  print "-" * 20
+  print "FULL SCORE"
+  get_score(all_runs)
 
 if __name__ == "__main__":
   main()
