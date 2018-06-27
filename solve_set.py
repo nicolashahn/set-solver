@@ -6,17 +6,23 @@ writes and/or displays the game image with the sets indicated.
 import argparse
 import sys
 from SetGame import SetGame
+from common import game_img_filename
 
 def get_args():
   parser = argparse.ArgumentParser(description='Solve SET from a game image.')
-  parser.add_argument('filename', metavar='filename', type=str)
+  parser.add_argument('filename', metavar='filename', type=str, nargs='?')
+  parser.add_argument('--game', dest='game_num', type=int)
   parser.add_argument('--write', dest='write', action='store_true')
   parser.add_argument('--display', dest='display', action='store_true')
   return parser.parse_args()
 
 def main():
   args = get_args()
-  game = SetGame(args.filename)
+  if args.game_num:
+    filename = game_img_filename(args.game_num)
+  else:
+    filename = args.filename
+  game = SetGame(filename)
   game.solve()
   game.print_sets()
   game.draw_sets()

@@ -12,6 +12,7 @@ import cv2
 import numpy as np
 from common import (
   CARD_FINDER_OUT_DIR,
+  game_img_filename,
   clean_make_dir,
   write_im,
   display_im,
@@ -25,7 +26,6 @@ from common import (
 # but we'll simplify the problem for now
 MAXCARDS = 15
 
-GAME_FILE_FMT = 'image-data/set-games/setgame{}.jpg'
 OUT_FILE_FMT = 'card{}.jpg'
 
 # output set card image dimensions
@@ -36,9 +36,6 @@ OUT_HEIGHT = 300
 THRESH_MIN = 180
 # how much a contour's area can differ from the mean of the top MAXCARDS
 CONTOUR_AREA_TOLERANCE = 2.5
-
-def game_img_filename(n):
-  return GAME_FILE_FMT.format(n)
 
 def remove_contour_outliers(contours):
   """Remove contours that differ greatly from the median size.

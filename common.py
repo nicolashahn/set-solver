@@ -24,6 +24,8 @@ SET_GAMES_DIR = os.path.join(IM_DATA_DIR, 'set-games')
 # individual card images from these games cut out and labeled
 SET_GAME_CARDS_DIR = os.path.join(IM_DATA_DIR, 'set-game-cards')
 
+GAME_FILE_FMT = os.path.join(SET_GAMES_DIR, 'setgame{}.jpg')
+
 # all cards labeled
 ALL_CARDS_LABELED_DIR = os.path.join(IM_DATA_DIR, 'all-cards', 'labeled')
 ALL_SHAPES_DIR = os.path.join(IM_DATA_DIR, 'all-shapes')
@@ -40,6 +42,9 @@ CARD_ATTRS = {
 #############
 # Functions #
 #############
+
+def game_img_filename(n):
+  return GAME_FILE_FMT.format(n)
 
 def clean_make_dir(output_dir):
   if os.path.exists(output_dir):

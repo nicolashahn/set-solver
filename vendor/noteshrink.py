@@ -278,6 +278,7 @@ def get_argument_parser(filenames=[]):
     # TODO fix this disgusting hack or extract the parser here entirely
     parser.add_argument('--write', dest='write', action='store_true')
     parser.add_argument('--display', dest='display', action='store_true')
+    parser.add_argument('--game', dest='game_num', type=int)
 
     return parser
 
