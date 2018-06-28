@@ -60,10 +60,10 @@ optional arguments:
 * `classify_card.py` - Given a card image, outputs the best guess of what card it is.
 * `classify_card_accuracy.py` - Rate how well `classify_card.py` does against a directory of labeled card files.
 * `common.py` - Common constants or functions shared between scripts.
-* `cv2_diff.py` - The same functionality as [diffimg](https://github.com/nicolashahn/diffimg), but implemented using `cv2` instead of `PIL`. Gives different ratios and I still need to investigate why. Also runs much slower.
+* `cv2_diff.py` - The same functionality as [diffimg](https://github.com/nicolashahn/diffimg), but implemented using `cv2` instead of `PIL`. Gives different ratios and I still need to investigate why. Also runs much slower. Not used in the pipeline as of now.
 * `process_card.py` - Process a card image so that it's more easily classified by `classify_card.py`.
 * `extract_shapes.py` - Cut out one to three shapes from a card image.
-* `label_all_cards.py` - Single use script to easily label cards.
+* `label_all_cards.py` - Single use script to easily generate labeled cards.
 * `solve_set.py` - Script that runs the whole pipeline - takes in a game image file and displays that image with the sets overlaid.
 * `test.py` - Tests for each chunk of the pipeline.
 
