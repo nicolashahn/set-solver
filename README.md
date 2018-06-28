@@ -1,7 +1,7 @@
 # set-solver
 Solve the SET card game using OpenCV. Image of a game of set -> same image with labeled sets. Under construction.
 
-![Solved set game](./image-data/solved/solved11.png)
+![Solved set game](./image-data/solved/solved12_small.jpg)
 
 ## Setup
 
@@ -9,18 +9,45 @@ Solve the SET card game using OpenCV. Image of a game of set -> same image with 
 
 Mac: [Use this guide](https://www.pyimagesearch.com/2016/12/19/install-opencv-3-on-macos-with-homebrew-the-easy-way/)
 
-Linux: \#TODO
+Linux: ??? (`#TODO`)
 
 ### 2. Install python libraries: 
 
 ```
-#TODO
+pip install -r requirements.txt
+```
+
+Or use a `virtualenv` if you don't want to clutter your global packages
+
+```
+python -m virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
 ### 3. Solve SET!
 
+To solve a game and display the image with boxes around the sets:
+
 ```
-./solve_set.py <game_image_file>
+./solve_set.py [filename] --display
+```
+
+#### Full usage:
+```
+usage: solve_set.py [-h] [--game GAME_NUM] [--write] [--display] [filename]
+
+Solve SET from a game image.
+
+positional arguments:
+  filename         Game image filename
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --game GAME_NUM  use a test image from image-data/set-
+                   games/setgame<GAME_NUM>.jpg
+  --write          Write the solved image to solve-out/solved.jpg
+  --display        Display the solved image with cv2.display()
 ```
 
 ## Files
@@ -38,26 +65,15 @@ Linux: \#TODO
 * `extract_shapes.py` - Cut out one to three shapes from a card image.
 * `label_all_cards.py` - Single use script to easily label cards.
 * `solve_set.py` - Script that runs the whole pipeline - takes in a game image file and displays that image with the sets overlaid.
-* `test.py` - Tests are life.
+* `test.py` - Tests for each chunk of the pipeline.
 
-## Tasks
+## Future tasks
 
-- [ ] Make `card_finder.py` more reliable - sometimes drops a card
-- [x] Increase card classification accuracy
-  - [x] Bucket colors - https://mzucker.github.io/2016/09/20/noteshrink.html
-    - [x] Generate bucketed+labeled card set
-    - [x] Bucket colors in the unclassified card before comparing against the bucketed+labeled cards
-  - [x] Find a reliable way to choose shade (solid/stripes/outline)
-    - [ ] Accuracy here can still be improved
-  - [ ] "Shove a neural net into it" - optional if OpenCV isn't enough (probably not necessary)
+- [ ] Increase card classification accuracy
+  - [ ] "Shove a neural net into it" - optional if OpenCV isn't enough (probably not necessary, but could be fun)
     - [ ] I don't want to take hundreds of pictures of cards, so maybe fake a training set? Take the same image and artificially introduce jitter in a variety of ways (position, skew, rotation, white balance, lighting, etc) that mimics the real differences we'd get
-- [x] Solve SET once the image's card's labels are in memory
-   - [x] Brute force it first
-   - [ ] Better than brute force? Might be interesting to think about if SET's # cards on table, # attributes, # categories per attribute were increased
-- [x] Get the pipeline smoothed out. Input is a game image, output is the sets overlayed
-  - [x] Write outlines of sets onto original image
-  - [ ] E2E test for entire pipeline
-  - [ ] More tests in general
+- [ ] Better than brute force way to solve SET? Might be interesting to think about if SET's # cards on table, # attributes, # categories per attribute were increased
+- [ ] More tests in general
 - [ ] Make it run on a phone
   - [ ] React Native app that sends an image to a Flask app?
   - [ ] Have the whole pipeline run on the phone? Going to require an entire rewrite of the pipeline
