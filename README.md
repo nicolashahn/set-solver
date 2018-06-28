@@ -1,5 +1,5 @@
 # set-solver
-Solve the SET card game using OpenCV. Image of a game of set -> same image with labeled sets. Under construction.
+Solve the SET card game using OpenCV. Takes an image of a game of SET, returns same image with the sets indicated by drawing colored boxes around them.
 
 ![Solved set game](./image-data/solved/solved12_small.jpg)
 
@@ -77,3 +77,7 @@ optional arguments:
 - [ ] Make it run on a phone
   - [ ] React Native app that sends an image to a Flask app?
   - [ ] Have the whole pipeline run on the phone? Going to require an entire rewrite of the pipeline
+  
+## Why?
+
+Because SET is fun, computer vision is awesome (and so is OpenCV), and I needed something to do at [the Recurse Center.](https://recurse.com)
