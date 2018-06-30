@@ -1,5 +1,5 @@
 # set-solver
-Solve the SET card game using OpenCV. Image of a game of set -> same image with labeled sets. Under construction.
+Solve the SET card game using OpenCV. Takes an image of a game of SET, returns same image with the sets indicated by drawing colored boxes around them.
 
 ![Solved set game](./image-data/solved/solved12_small.jpg)
 
@@ -60,10 +60,10 @@ optional arguments:
 * `classify_card.py` - Given a card image, outputs the best guess of what card it is.
 * `classify_card_accuracy.py` - Rate how well `classify_card.py` does against a directory of labeled card files.
 * `common.py` - Common constants or functions shared between scripts.
-* `cv2_diff.py` - The same functionality as [diffimg](https://github.com/nicolashahn/diffimg), but implemented using `cv2` instead of `PIL`. Gives different ratios and I still need to investigate why. Also runs much slower.
+* `cv2_diff.py` - The same functionality as [diffimg](https://github.com/nicolashahn/diffimg), but implemented using `cv2` instead of `PIL`. Gives different ratios and I still need to investigate why. Also runs much slower. Not used in the pipeline as of now.
 * `process_card.py` - Process a card image so that it's more easily classified by `classify_card.py`.
 * `extract_shapes.py` - Cut out one to three shapes from a card image.
-* `label_all_cards.py` - Single use script to easily label cards.
+* `label_all_cards.py` - Single use script to easily generate labeled cards.
 * `solve_set.py` - Script that runs the whole pipeline - takes in a game image file and displays that image with the sets overlaid.
 * `test.py` - Tests for each chunk of the pipeline.
 
@@ -77,3 +77,7 @@ optional arguments:
 - [ ] Make it run on a phone
   - [ ] React Native app that sends an image to a Flask app?
   - [ ] Have the whole pipeline run on the phone? Going to require an entire rewrite of the pipeline
+  
+## Why?
+
+Because SET is fun, computer vision is awesome (and so is OpenCV), and I needed something to do at [the Recurse Center.](https://recurse.com)
