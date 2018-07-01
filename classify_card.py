@@ -53,17 +53,6 @@ def classify_simple_diff(card_file_to_classify, method="PIL"):
     return None
   return best
 
-def keypoints_card(img, thresh_min=100):
-  flag, thresh = cv2.threshold(img, thresh_min, 255, cv2.THRESH_BINARY)
-  # Initiate ORB detector
-  orb = cv2.ORB_create()
-  # find the keypoints with ORB
-  kp,des = orb.detectAndCompute(img,None)
-  # compute the descriptors with ORB
-  print "KEYPOINTS", len(kp), des
-  # draw only keypoints location,not size and orientation
-  img2 = cv2.drawKeypoints(img, kp, None, color=(0,255,0), flags=0)
-
 def orb_score(shape_to_find, cv_im, canny=False, min_match_ct=10, thresh_min=100):
   """Use ORB to get a match score for image file shape_to_find and cv_im."""
   img1 = cv2.imread(shape_to_find,0)
@@ -171,12 +160,12 @@ def classify_card_from_im(card_im):
 
   if len(shapes) > 0:
     ret = shapes[0][1]
-    _,n,f,s = ret.split("-")
+    _,_,_,shape = ret.split("-")
 
     ret = fills[0][1]
-    _, _, f, _ = ret.split("-")
+    _,_,fill,_ = ret.split("-")
 
-    r = "-".join([color, number, f, s ])
+    r = "-".join([color, number, fill, shape])
     return r
 
   return ""

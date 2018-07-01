@@ -154,8 +154,20 @@ def scale_points(points, scale):
   return points
 
 def label_to_dict(label):
-  """Convert a label like 'red-triple-stripes-squiggle.jpg' to 
+  """Convert a label like 'red-triple-stripes-squiggle.jpg' to
   {'color':'red', 'number':'triple'...etc}
   """
   tokens = [t.split('.')[0] for t in label.split('-')]
   return dict(zip(sorted(CARD_ATTRS.keys()), tokens))
+
+def keypoints_card(img, thresh_min=100):
+  flag, thresh = cv2.threshold(img, thresh_min, 255, cv2.THRESH_BINARY)
+  # Initiate ORB detector
+  orb = cv2.ORB_create()
+  # find the keypoints with ORB
+  kp,des = orb.detectAndCompute(img,None)
+  # compute the descriptors with ORB
+  print "KEYPOINTS", len(kp), des
+  # draw only keypoints location,not size and orientation
+  img2 = cv2.drawKeypoints(img, kp, None, color=(0,255,0), flags=0)
+
