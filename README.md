@@ -60,7 +60,6 @@ optional arguments:
 * `classify_card.py` - Given a card image, outputs the best guess of what card it is.
 * `classify_card_accuracy.py` - Rate how well `classify_card.py` does against a directory of labeled card files.
 * `common.py` - Common constants or functions shared between scripts.
-* `cv2_diff.py` - The same functionality as [diffimg](https://github.com/nicolashahn/diffimg), but implemented using `cv2` instead of `PIL`. Gives different ratios and I still need to investigate why. Also runs much slower. Not used in the pipeline as of now.
 * `process_card.py` - Process a card image so that it's more easily classified by `classify_card.py`.
 * `extract_shapes.py` - Cut out one to three shapes from a card image.
 * `label_all_cards.py` - Single use script to easily generate labeled cards.
@@ -69,14 +68,14 @@ optional arguments:
 
 ## Future tasks
 
-- [ ] Increase card classification accuracy
+- [ ] Increase card classification accuracy - pretty good, but not perfect yet
   - [ ] "Shove a neural net into it" - optional if OpenCV isn't enough (probably not necessary, but could be fun)
     - [ ] I don't want to take hundreds of pictures of cards, so maybe fake a training set? Take the same image and artificially introduce jitter in a variety of ways (position, skew, rotation, white balance, lighting, etc) that mimics the real differences we'd get
 - [ ] Better than brute force way to solve SET? Might be interesting to think about if SET's # cards on table, # attributes, # categories per attribute were increased
 - [ ] More tests in general
 - [ ] Make it run on a phone
   - [ ] React Native app that sends an image to a Flask app?
-  - [ ] Have the whole pipeline run on the phone? Going to require an entire rewrite of the pipeline
+  - [ ] Have the whole thing run on the phone? Going to require an entire rewrite in Java or something
   
 ## Why?
 
