@@ -8,10 +8,12 @@ from common import IM_DATA_DIR
 import card_finder as cf
 import classify_card as cc
 import extract_shapes as es
+from SetGame import SetGame
 
 TMP_DIR = 'tmp'
 TEST_DATA_DIR = os.path.join(IM_DATA_DIR, 'test')
 SAMPLE_CARD = os.path.join(TEST_DATA_DIR, 'card06.jpg')
+SAMPLE_GAME = os.path.join(TEST_DATA_DIR, 'setgame12.jpg')
 
 class TestAll(unittest.TestCase):
 
@@ -56,6 +58,14 @@ class TestAll(unittest.TestCase):
   def test_process_card_e2e(self):
     # TODO
     pass
+
+  def test_SetGame(self):
+    game = SetGame(SAMPLE_GAME)
+    game.solve()
+    self.assertEqual(
+      len(game.sets),
+      6
+    )
 
 if __name__ == "__main__":
   unittest.main()
