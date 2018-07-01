@@ -18,41 +18,6 @@ from common import (
   jpgs_in_dir
 )
 
-def classify_simple_diff(card_file_to_classify, method="PIL"):
-  """Diff the given card file against all labeled cards, choose the lowest
-  diff valued card. Default diff method is using PIL, can also use cv2.
-  """
-  scores = {}
-  labeled_filenames = [f for f in os.listdir(ALL_CARDS_LABELED_DIR) if f[-4:] == '.jpg']
-
-  # diff against all labeled cards, get best score
-  for labeled_filename in labeled_filenames:
-    labeled_filename_path = os.path.join(ALL_CARDS_LABELED_DIR, labeled_filename)
-
-    # image differentiation algorithm using PIL
-    if method == 'PIL':
-      scores[labeled_filename] = diff_PIL(
-        labeled_filename_path,
-        card_file_to_classify,
-        delete_diff_file=True
-      )
-
-    # using cv2, this method is much slower
-    elif method == 'cv2':
-      labeled_card = cv2.imread(labeled_filename_path, 1)
-      card_to_classify = cv2.imread(card_file_to_classify, 1)
-      scores[labeled_filename] = diff_cv2(
-        labeled_card,
-        card_to_classify
-      )
-
-  best = min(scores, key=scores.get)
-
-  # diff score is very bad for all, probably not a card
-  if scores[best] > 0.3:
-    return None
-  return best
-
 def orb_score(shape_to_find, cv_im, canny=False, min_match_ct=10, thresh_min=100):
   """Use ORB to get a match score for image file shape_to_find and cv_im."""
   img1 = cv2.imread(shape_to_find,0)
