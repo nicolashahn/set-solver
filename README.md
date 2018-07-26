@@ -79,4 +79,4 @@ optional arguments:
   
 ## Why?
 
-Because SET is fun, computer vision is awesome (and so is OpenCV), and I needed something to do at [the Recurse Center.](https://recurse.com)
+[The full story is here, ](http://www.nicolas-hahn.com/recurse/center/2018/07/25/set-solver/) but because SET is fun, computer vision is awesome (and so is OpenCV), and I needed something to do at [the Recurse Center.](https://recurse.com)
