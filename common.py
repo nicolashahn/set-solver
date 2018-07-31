@@ -80,7 +80,7 @@ def mean(ns):
   return sum(ns)/(len(ns) or 1)
 
 def median(ns):
-  return ns[len(ns)/2]
+  return ns[len(ns)//2]
 
 def shrink(im, max_dim=1000):
   """Make image a computationally wieldy size if necessary."""
@@ -167,7 +167,7 @@ def keypoints_card(img, thresh_min=100):
   # find the keypoints with ORB
   kp,des = orb.detectAndCompute(img,None)
   # compute the descriptors with ORB
-  print "KEYPOINTS", len(kp), des
+  print("KEYPOINTS", len(kp), des)
   # draw only keypoints location,not size and orientation
   img2 = cv2.drawKeypoints(img, kp, None, color=(0,255,0), flags=0)
 

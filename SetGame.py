@@ -74,13 +74,13 @@ class SetGame(Cv2Image):
 
   def print_sets(self):
     if not self.sets:
-      print '\nNo sets found\n'
+      print('\nNo sets found\n')
     else:
-      print '\n{} sets found\n'.format(len(self.sets))
+      print('\n{} sets found\n'.format(len(self.sets)))
       for i, cards in enumerate(self.sets):
-        print 'Set {}:'.format(i+1)
+        print('Set {}:'.format(i+1))
         for card in cards:
-          print '  {}'.format(card.label.split('.')[0])
+          print('  {}'.format(card.label.split('.')[0]))
 
   def draw_sets(self):
     """Update original game image with sets highlighted."""
@@ -100,7 +100,7 @@ class SetGame(Cv2Image):
         # make box bigger if card already has box(es)
         xscale = card_boxes[card]*0.08 + 1.0
         yscale = card_boxes[card]*0.12 + 1.0
-        line_thickness = base_thickness - card_boxes[card]*10
+        line_thickness = int(base_thickness - card_boxes[card]*10)
         card_boxes[card] += 1
         corners = scale_points(np.copy(card.corners), (xscale, yscale))
 

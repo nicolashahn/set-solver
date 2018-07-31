@@ -25,7 +25,7 @@ def main():
       shape_rgb(os.path.join(ALL_CARDS_LABELED_DIR,f)) for f in color_files]
     res.append((color, pixels_mean(color_values)))
   for color, rgb in res:
-    print color, rgb
+    print(color, rgb)
 
 
 if __name__ == "__main__":

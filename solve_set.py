@@ -28,7 +28,7 @@ def main():
   elif args.filename:
     filename = args.filename
   else:
-    print 'Error: must pass either a filename or --game GAME_NUM'
+    print('Error: must pass either a filename or --game GAME_NUM')
     sys.exit(1)
 
   game = SetGame(filename)

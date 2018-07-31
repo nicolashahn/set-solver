@@ -28,13 +28,13 @@ def get_score(fle_tuples):
       if label[key] == expected[key]:
         scores[key] += 1
       else:
-        print filename, "EXPECTED", expected[key], "BUT GOT", label[key]
+        print(filename, "EXPECTED", expected[key], "BUT GOT", label[key])
     if label == expected:
       perfect_classifications += 1
     else:
       incorrect.append(filename)
   if incorrect:
-    print 'Incorrectly labeled:'
+    print('Incorrectly labeled:')
     for filename in incorrect:
       print(filename)
 
@@ -76,16 +76,16 @@ def test_cards_in_dir(labeled_cards_dir=LABELED_CARDS_DIR):
 def main():
   all_runs = []
   for game_num in [ 4, 5, 7, 8, 10, 11 ]:
-      print ""
+      print("")
       labeled_card_dir = os.path.join(SET_GAME_CARDS_DIR, 'setgame{}'.format(game_num))
       this_run = test_cards_in_dir(labeled_card_dir)
-      print "SCORE FOR GAME %s" % game_num
+      print("SCORE FOR GAME {}".format(game_num))
       get_score(this_run)
 
       all_runs.extend(this_run)
 
-  print "-" * 20
-  print "FULL SCORE"
+  print("-" * 20)
+  print("FULL SCORE")
   get_score(all_runs)
 
 if __name__ == "__main__":

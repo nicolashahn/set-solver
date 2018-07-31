@@ -50,7 +50,7 @@ def remove_contour_outliers(contours):
     c_area = cv2.contourArea(c)
     return ((1/tolerance)*med < c_area) and (c_area < tolerance*med)
 
-  contours = filter(area_filter, contours)
+  contours = list(filter(area_filter, contours))
   return contours
   
 def find_cards(filename,

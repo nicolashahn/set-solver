@@ -7,9 +7,6 @@ import cv2
 import numpy as np
 from extract_shapes import extract_shapes_from_im 
 from process_card import noteshrink_card_from_im
-from matplotlib import pyplot as plt
-from diffimg import diff as diff_PIL
-from cv2_diff import diff as diff_cv2
 from common import (
   ALL_CARDS_LABELED_DIR,
   ALL_SHAPES_DIR,
@@ -93,7 +90,7 @@ def shape_rgb(card_im):
   return pixels_mean(non_whites)
 
 def color_diff(rgb1, rgb2):
-  """Compute diff in two pixel's colors."""
+  """Compute diff in two pixel's colors (R,G,B tuples)."""
   return sum([abs(rgb1[i] - rgb2[i]) for i in range(len(rgb1))])
 
 def classify_color(card_im):
