@@ -7,9 +7,9 @@ Solve the SET card game using OpenCV. Takes an image of a game of SET, returns s
 
 ### 1. Install OpenCV
 
-Mac: [Use this guide](https://www.pyimagesearch.com/2016/12/19/install-opencv-3-on-macos-with-homebrew-the-easy-way/)
+[Mac](https://www.pyimagesearch.com/2016/12/19/install-opencv-3-on-macos-with-homebrew-the-easy-way/)
 
-Linux: ??? (`#TODO`)
+[Linux](https://www.learnopencv.com/install-opencv3-on-ubuntu/)
 
 ### 2. Install python libraries: 
 
@@ -79,4 +79,4 @@ optional arguments:
   
 ## Why?
 
-Because SET is fun, computer vision is awesome (and so is OpenCV), and I needed something to do at [the Recurse Center.](https://recurse.com)
+[The full story is here, ](http://www.nicolas-hahn.com/recurse/center/2018/07/25/set-solver/) but because SET is fun, computer vision is awesome (and so is OpenCV), and I needed something to do at [the Recurse Center.](https://recurse.com)
