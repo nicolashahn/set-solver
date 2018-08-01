@@ -100,7 +100,8 @@ class SetGame(Cv2Image):
         # make box bigger if card already has box(es)
         xscale = card_boxes[card]*0.08 + 1.0
         yscale = card_boxes[card]*0.12 + 1.0
-        line_thickness = int(base_thickness - card_boxes[card]*10)
+        line_thickness = int(
+          base_thickness - card_boxes[card]*(base_thickness / 10))
         card_boxes[card] += 1
         corners = scale_points(np.copy(card.corners), (xscale, yscale))
 
