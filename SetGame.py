@@ -113,7 +113,7 @@ class SetGame(Cv2Image):
   def write_im(self, filename, out_dir=SOLVE_OUT):
     if out_dir == SOLVE_OUT:
       clean_make_dir(out_dir)
-    return write_im(self.im, filename, out_dir=SOLVE_OUT)
+    return write_im(self.im, filename, out_dir=out_dir)
 
   def solve(self):
     """Run through entire pipeline to get and save sets."""
