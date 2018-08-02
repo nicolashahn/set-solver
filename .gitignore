@@ -5,3 +5,9 @@ finder-out
 process-out
 shapes-out
 solve-out
+virt/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
