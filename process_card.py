@@ -6,7 +6,6 @@ import os
 import sys
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
 from common import PROCESS_CARD_OUT_DIR, write_im, display_im, shrink
 
 from vendor import noteshrink
