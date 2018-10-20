@@ -1,6 +1,8 @@
 # set-solver
 Solve the SET card game using OpenCV. Takes an image of a game of SET, returns same image with the sets indicated by drawing colored boxes around them.
 
+[Here's how it works.](http://www.nicolas-hahn.com/recurse/center/2018/07/25/set-solver/)
+
 ![Solved set game](./image-data/solved/solved12_small.jpg)
 
 ## Setup
