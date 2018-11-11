@@ -12,6 +12,8 @@ import cv2
 import numpy as np
 from common import (
   CARD_FINDER_OUT_DIR,
+  CARD_WIDTH,
+  CARD_HEIGHT,
   game_img_filename,
   clean_make_dir,
   write_im,
@@ -27,10 +29,6 @@ from common import (
 MAXCARDS = 15
 
 OUT_FILE_FMT = 'card{}.jpg'
-
-# output set card image dimensions
-OUT_WIDTH = 450
-OUT_HEIGHT = 300
 
 # min channel cutoff for the threshold filter
 THRESH_MIN = 180
@@ -52,10 +50,11 @@ def remove_contour_outliers(contours):
 
   contours = list(filter(area_filter, contours))
   return contours
-  
+
+
 def find_cards(filename,
-               out_w=OUT_WIDTH,
-               out_h=OUT_HEIGHT,
+               out_w=CARD_WIDTH,
+               out_h=CARD_HEIGHT,
                display_points=False,
                with_corners=False):
   """Find SET game cards in image and return as a list of images."""
@@ -115,6 +114,7 @@ def find_cards(filename,
   if display_points:
     display_im(orig_im)
 
+
 def write_cards(cards, out_dir=CARD_FINDER_OUT_DIR, out_file=OUT_FILE_FMT):
   """Write enumerated card image files, print filenames."""
   clean_make_dir(out_dir)
@@ -126,6 +126,7 @@ def write_cards(cards, out_dir=CARD_FINDER_OUT_DIR, out_file=OUT_FILE_FMT):
     write_im(card, filename=filename, out_dir=out_dir, print_path=True)
     filenames.append(os.path.join(out_dir, filename))
   return filenames
+
 
 def get_args():
   """Argument parser
@@ -140,6 +141,7 @@ def get_args():
   parser.add_argument('--nowrite', dest='nowrite', action='store_true')
   parser.add_argument('--display', dest='display', action='store_true')
   return parser.parse_args()
+
 
 def main():
   """Find cards, then either write to files or display images.
@@ -158,6 +160,7 @@ def main():
     write_cards(cards)
   if args.display:
     [display_im(card) for card in cards]
+
 
 if __name__ == '__main__':
   main()

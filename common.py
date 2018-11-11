@@ -38,6 +38,10 @@ CARD_ATTRS = {
   'shape': ['diamond', 'squiggle', 'capsule']
 }
 
+# size of stored card images
+CARD_WIDTH = 450
+CARD_HEIGHT = 300
+
 
 #############
 # Functions #
