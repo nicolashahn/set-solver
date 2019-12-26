@@ -59,6 +59,8 @@ def write_im(im,
              filename,
              out_dir=PROCESS_CARD_OUT_DIR,
              print_path=False):
+  if not os.path.exists(out_dir):
+    os.mkdir(out_dir)
   """Write image to given path and filename."""
   out_path = os.path.join(out_dir, filename)
   cv2.imwrite(out_path, im)
