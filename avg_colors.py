@@ -16,17 +16,20 @@ from common import ALL_CARDS_LABELED_DIR, mean
 
 
 def main():
-  all_files = os.listdir(ALL_CARDS_LABELED_DIR)
+    all_files = os.listdir(ALL_CARDS_LABELED_DIR)
 
-  res = []
-  for color in ('red', 'green', 'purple'):
-    color_files = [f for f in all_files if f.startswith(color) and f.endswith('.jpg')]
-    color_values = [
-      shape_rgb(os.path.join(ALL_CARDS_LABELED_DIR,f)) for f in color_files]
-    res.append((color, pixels_mean(color_values)))
-  for color, rgb in res:
-    print(color, rgb)
+    res = []
+    for color in ("red", "green", "purple"):
+        color_files = [
+            f for f in all_files if f.startswith(color) and f.endswith(".jpg")
+        ]
+        color_values = [
+            shape_rgb(os.path.join(ALL_CARDS_LABELED_DIR, f)) for f in color_files
+        ]
+        res.append((color, pixels_mean(color_values)))
+    for color, rgb in res:
+        print(color, rgb)
 
 
 if __name__ == "__main__":
-  main()
+    main()
