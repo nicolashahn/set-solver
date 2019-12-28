@@ -139,7 +139,7 @@ def classify_card_from_file(card_file_to_classify):
 
 def main():
     card_file_to_classify = sys.argv[1]
-    classified_card = classify_card(card_file_to_classify)
+    classified_card = classify_card_from_file(card_file_to_classify)
     print(classified_card)
 
 
