@@ -4,10 +4,11 @@
 import os
 import sys
 import cv2
-import numpy as np
 from extract_shapes import extract_shapes_from_im
+from label_all_cards import manually_label_card
 from process_card import noteshrink_card_from_im
-from common import ALL_CARDS_LABELED_DIR, ALL_SHAPES_DIR, display_im, mean, jpgs_in_dir
+from common import ALL_SHAPES_DIR, mean, jpgs_in_dir
+from vendor.noteshrink import CannotGetPalette
 
 
 def orb_score(shape_to_find, cv_im, canny=False, min_match_ct=10, thresh_min=100):
@@ -94,7 +95,11 @@ def color_diff(rgb1, rgb2):
 
 
 def classify_color(card_im):
-    unclassified_rgb = shape_rgb(card_im)
+    try:
+        unclassified_rgb = shape_rgb(card_im)
+    except CannotGetPalette:
+        # handled upstream
+        return ""
 
     # precomputed in avg_colors.py
     color_avgs = {"red": (0, 34, 226), "green": (64, 123, 0), "purple": (89, 0, 76)}
@@ -115,21 +120,24 @@ def classify_card_from_im(card_im):
     """Classify the card's attributes, returning a label like
   red-triple-outline-squiggle.jpg."""
     shapes = get_best_orb_matches(card_im, canny=True)
-    fills = get_best_orb_matches(card_im)
+    shades = get_best_orb_matches(card_im)
     color = classify_color(card_im)
     number = classify_number_from_shapes(shapes)
 
-    if len(shapes) > 0:
+    if any([(not attr) for attr in (shapes, shades, color, number)]):
+        print(
+            "Could not classify at least one of the attributes of this card. "
+            "Please enter the attribute labels manually."
+        )
+        color, number, shade, shape = manually_label_card(card_im)
+    else:
         ret = shapes[0][1]
         _, _, _, shape = ret.split("-")
 
-        ret = fills[0][1]
-        _, _, fill, _ = ret.split("-")
+        ret = shades[0][1]
+        _, _, shade, _ = ret.split("-")
 
-        r = "-".join([color, number, fill, shape])
-        return r
-
-    return ""
+    return "-".join([color, number, shade, shape])
 
 
 def classify_card_from_file(card_file_to_classify):

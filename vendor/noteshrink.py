@@ -22,6 +22,11 @@ import numpy as np
 from PIL import Image
 from scipy.cluster.vq import kmeans, vq
 
+
+class CannotGetPalette(BaseException):
+    """ Noteshrink was unable to get the foreground palette for the image. """
+
+
 ######################################################################
 
 
@@ -478,9 +483,11 @@ palette, as well as a mask corresponding to the foreground pixels.
 
     fg_mask = get_fg_mask(bg_color, samples, options)
 
-    centers, _ = kmeans(
-        samples[fg_mask].astype(np.float32), options.num_colors - 1, iter=kmeans_iter
-    )
+    masked = samples[fg_mask].astype(np.float32)
+    if not masked.any():
+        raise CannotGetPalette("Unable to detect any foreground pixels")
+
+    centers, _ = kmeans(masked, options.num_colors - 1, iter=kmeans_iter)
 
     palette = np.vstack((bg_color, centers)).astype(np.uint8)
 
