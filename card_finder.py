@@ -74,7 +74,7 @@ def find_cards(
     flag, thresh = cv2.threshold(blur, THRESH_MIN, 255, cv2.THRESH_BINARY)
 
     # `image` is the thrown away value
-    _, contours, hierarchy = cv2.findContours(
+    contours, hierarchy = cv2.findContours(
         thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
     )
 
