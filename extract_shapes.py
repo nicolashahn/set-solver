@@ -33,7 +33,7 @@ def extract_shapes_from_im(
     thresh = cv2.bitwise_not(thresh)
 
     # `image` is the thrown away value
-    _, contours, hierarchy = cv2.findContours(
+    contours, hierarchy = cv2.findContours(
         thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
     )
 
